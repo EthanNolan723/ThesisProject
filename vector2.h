@@ -1,5 +1,5 @@
-#ifndef VECTOR3_H
-#define VECTOR3_H
+#ifndef VECTOR2_H
+#define VECTOR2_H
 
 #include <cmath>
 
@@ -27,4 +27,4 @@ public:
     }
 };
 
-#endif // VECTOR3_H
+#endif

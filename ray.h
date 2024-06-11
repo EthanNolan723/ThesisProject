@@ -22,4 +22,11 @@ public:
     }
 };
 
+struct HitInfo{  // If ray hits a object
+    bool didHit;
+    float distance;
+    Vector2 hitPoint;
+    Vector2 normal;
+};
+
 #endif // RAY_H
