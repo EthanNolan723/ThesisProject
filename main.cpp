@@ -5,6 +5,12 @@
 #include "ray.h"
 #include "layerMaterial.h"
 
+#include <SDL2/SDL.h>
+#include <stdio.h>
+
+#define SCREEN_WIDTH 1280 
+#define SCREEN_HEIGHT 720
+
 using namespace std;
 
 HitInfo intersection(const Ray& ray, const layer){ // Simplification assuming that all layers are horizontal.

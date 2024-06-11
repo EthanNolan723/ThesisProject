@@ -7,6 +7,10 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
+                "${workspaceFolder}/src/include",
+                "-I",
+                "${workspaceFolder}/src/lib",
+                "-L",
                 "${workspaceFolder}/*.cpp",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
