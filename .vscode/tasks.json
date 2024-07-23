@@ -7,16 +7,16 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "${workspaceFolder}/src/include",
-                "-I",
-                "${workspaceFolder}/src/lib",
-                "-L",
                 "${workspaceFolder}/*.cpp",
+                "-I${workspaceFolder}/src/include",
+                "-I${workspaceFolder}/src/lib",
+                "-L${workspaceFolder}/src/lib",
+                "-lSDL2",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "${workspaceFolder}/build/main.exe"
             ],
             "options": {
-                "cwd": "${fileDirname}"
+                "cwd": "${workspaceFolder}"
             },
             "problemMatcher": [
                 "$gcc"
