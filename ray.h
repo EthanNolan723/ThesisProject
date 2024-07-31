@@ -2,6 +2,7 @@
 #define RAY_H
 
 #include "Vector2.h"
+#include <SDL2/SDL.h>
 
 class Ray {
 private:
@@ -17,8 +18,13 @@ public:
     Vector2 getDirection() const { return direction; }
 
     // Method to get a point along the ray at parameter t
-    Vector2 pointAtParameter(double t) const {
+    Vector2 step(double t) const {
         return position + direction * t;
+    }
+
+    void draw(SDL_Renderer* renderer, int distance) const {
+        Vector2 endPoint = step(distance);
+        SDL_RenderDrawLine(renderer, static_cast<int>(position.x), static_cast<int>(position.y),static_cast<int>(endPoint.x), static_cast<int>(endPoint.y));
     }
 };
 
