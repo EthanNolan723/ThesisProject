@@ -1,6 +1,6 @@
 #include "refraction.h"
 
-float refractedAngle(float n1, float n2, ray Ray, Vector2 normal);{
+float refractedAngle(float n1, float n2, Ray ray, Vector2 normal);{
 
     float dotProduct = ray.direction.dot(normal);
     float angleWithNormal = acos(dotProduct);

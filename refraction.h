@@ -3,10 +3,10 @@
 
 #include <cmath>
 #include "Vector2.h"
-#include "ray2.h"
+#include "ray.h"
 
 #define PI acos(-1)
 
-float refractedAngle(float n1, float n2, ray Ray, Vector2 normal);
+float refractedAngle(float n1, float n2, Ray ray, Vector2 normal);
 
 #endif
