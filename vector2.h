@@ -14,12 +14,14 @@ public:
     // Vector operations
     Vector2 operator+(const Vector2& v) const { return Vector2(x + v.x, y + v.y); }
     Vector2 operator-(const Vector2& v) const { return Vector2(x - v.x, y - v.y); }
+    Vector2 operator-() const { return Vector2(-x, -y); }
     Vector2 operator*(double t) const { return Vector2(x * t, y * t); }
 
     double dot(const Vector2& v) const { return x * v.x + y * v.y; }
     double cross(const Vector2& v) const { return x * v.y - y * v.x; }
 
     double length() const { return std::sqrt(x * x + y * y); }
+    double angle() const { return std::atan2(y, x); }
 
     Vector2 normalized() const {
         double len = length();

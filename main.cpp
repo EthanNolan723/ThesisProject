@@ -14,24 +14,37 @@
 
 using namespace std;
 
+
+#define SDL_WINDOW_WIDTH 1000
+#define SDL_WINDOW_HEIGHT 1000
+
 Vector2 RndDir(){ // Temp
     double randAngle = 2*PI * rand() / (RAND_MAX + 1);
     return Vector2(sin(randAngle), cos(randAngle));
 }
 
 int WinMain(int argc, char* argv[]){
-    float msg = refractedAngle(1.1, 1, 40*PI/180) * 180 / (PI);
-    cout << msg << " ";
-    srand (time(NULL));
-    
+    vector<Ray> testRays;
+    testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(0.0, 1.0)));
+    testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(1.0, 1.0)));
+
+    for (const Ray& ray : testRays){
+        cout << 180 * refractedAngle(1, 1.1, ray, Vector2(0,1)).angle() / PI << " ";
+        cout << 180 * refractedAngle(1, 1.1, ray, Vector2(-1,-1)).angle() / PI << " ";
+        cout << 180 * refractedAngle(1, 1.1, ray, Vector2(1,1)).angle() / PI << "\n";
+    }
+
     // vector<Ray> RAYS;
     // for (int i = 0; i < 256; i++){ // Generating Random Rays
     //     RAYS.push_back(Ray(Vector2(500, 500), RndDir()));
     // }
+    //cout << refractedAngle(1.5, 1, 40*PI/180);
 
-    Ray testRay(Vector2(500, 500), Vector2(0,1)); // Ray in center pointing straight up (down on screen)
-
-    Layer TestLayer(1.5, { Vector2(100, 600), Vector2(900, 600)}); // layer with refractive index 1 at y=4;
+    srand (time(NULL));
+    
+    vector<Layer> testLayers;
+    testLayers.push_back(Layer(1.5, { Vector2(100, 600), Vector2(900, 600)}));
+    testLayers.push_back(Layer(1.5, { Vector2(400, 800), Vector2(600, 600)}));
 
     //Create Empty Window
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -44,8 +57,8 @@ int WinMain(int argc, char* argv[]){
         "SDL2 Window",                    // Window title
         SDL_WINDOWPOS_CENTERED,           // Initial x position
         SDL_WINDOWPOS_CENTERED,           // Initial y position
-        1000,                              // Width in pixels
-        1000,                              // Height in pixels
+        SDL_WINDOW_WIDTH,                 // Width in pixels
+        SDL_WINDOW_HEIGHT,                // Height in pixels
         SDL_WINDOW_SHOWN                  // Flags
     );
 
@@ -77,24 +90,18 @@ int WinMain(int argc, char* argv[]){
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        // int loopColour = 0;
-        // // Draw the ray
-        // for (const Ray& ray : RAYS) {
-        //     SDL_SetRenderDrawColor(renderer,
-        //                            max(min(255,255*2-loopColour),0), 
-        //                            min(min(255,loopColour),(255*3-loopColour)),
-        //                            min(max(0,loopColour-255*2),255),
-        //                            255);
-        //     ray.draw(renderer, 100);
-        //     loopColour += 4;
-        // }
-        // // Update screen
-        // SDL_RenderPresent(renderer);
-
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        testRay.draw(renderer,400);
+        // Draw Rays
+        SDL_SetRenderDrawColor(renderer,255,0,0,255);
+        for (const Ray& ray : testRays) {
+            ray.draw(renderer, 100);
+        }
+        //Draw Layers
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-        SDL_RenderDrawLine(renderer, static_cast<int>(TestLayer.getPoints()[0].x), static_cast<int>(TestLayer.getPoints()[0].y),static_cast<int>(TestLayer.getPoints()[1].x), static_cast<int>(TestLayer.getPoints()[1].y));
+        for (const Layer& layer : testLayers){
+            SDL_RenderDrawLine(renderer, static_cast<int>(layer.getPoints()[0].x), static_cast<int>(layer.getPoints()[0].y),
+                               static_cast<int>(layer.getPoints()[1].x), static_cast<int>(layer.getPoints()[1].y));
+        }
+        
         SDL_RenderPresent(renderer);
     }
 

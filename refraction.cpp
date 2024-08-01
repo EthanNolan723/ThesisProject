@@ -1,10 +1,14 @@
 #include "refraction.h"
 
-float refractedAngle(float n1, float n2, Ray ray, Vector2 normal);{
+Vector2 refractedAngle(float n1, float n2, Ray ray, Vector2 normal){
+    // Ensure the normal is pointing in the correct direction
+    if (ray.getDirection().dot(normal) < 0) {
+        normal = -normal;
+    }
+    
+    float angleWithNormal = acos(ray.getDirection().dot(normal) / (ray.getDirection().length() * normal.length()));
 
-    float dotProduct = ray.direction.dot(normal);
-    float angleWithNormal = acos(dotProduct);
-
+    float refractedAngleWithNormal;
     if ((n1 > n2) && (angleWithNormal > asin(n2 / n1))) {
         refractedAngleWithNormal = -angleWithNormal;
     } else {
@@ -12,8 +16,7 @@ float refractedAngle(float n1, float n2, Ray ray, Vector2 normal);{
     }
 
     // Convert the refracted angle back to the global coordinate system
-    float globalRefractedAngle = atan2(sin(incidentAngle1) * cos(refractedAngleWithNormal) - cos(incidentAngle1) * sin(refractedAngleWithNormal), 
-                                       cos(incidentAngle1) * cos(refractedAngleWithNormal) + sin(incidentAngle1) * sin(refractedAngleWithNormal));
+    float globalRefractedAngle = normal.angle() - refractedAngleWithNormal;
 
-    return globalRefractedAngle; // return global angle
+    return Vector2(cos(globalRefractedAngle),sin(globalRefractedAngle)); // return global angle
 }

@@ -6,7 +6,8 @@
 #include "ray.h"
 
 #define PI acos(-1)
+using namespace std;
 
-float refractedAngle(float n1, float n2, Ray ray, Vector2 normal);
+Vector2 refractedAngle(float n1, float n2, Ray ray, Vector2 normal);
 
 #endif
