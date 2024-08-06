@@ -2,6 +2,7 @@
 #define VECTOR2_H
 
 #include <cmath>
+using namespace std;
 
 class Vector2 {
 public:
@@ -20,8 +21,8 @@ public:
     double dot(const Vector2& v) const { return x * v.x + y * v.y; }
     double cross(const Vector2& v) const { return x * v.y - y * v.x; }
 
-    double length() const { return std::sqrt(x * x + y * y); }
-    double angle() const { return std::atan2(y, x); }
+    double length() const { return sqrt(x * x + y * y); }
+    double angle() const { return atan2(y, x); }
 
     Vector2 normalized() const {
         double len = length();
