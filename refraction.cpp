@@ -13,18 +13,22 @@ Vector2 refractedAngle(float n1, float n2, Ray ray, Vector2 normal){
 
     float angleWithNormal = acos(dotProduct / (ray.getDirection().length() * normal.length()));
 
-    float refractedAngleWithNormal;
-    if ((n1 > n2) && (angleWithNormal > asin(n2 / n1))) // Total Internal Reflection
-        refractedAngleWithNormal = -angleWithNormal;
+    float refractedAngle;
+    if ((n1 > n2) && (angleWithNormal > asin(n2 / n1))){ // Reflection
+        if (ray.getDirection().cross(normal) > 0)
+            refractedAngle = normal.angle() + PI + angleWithNormal;
+        else
+            refractedAngle = normal.angle() + PI - angleWithNormal;
+        return Vector2(cos(refractedAngle),sin(refractedAngle));
+    }   
     else
-        refractedAngleWithNormal = asin(n1 / n2 * sin(angleWithNormal));
+        refractedAngle = asin(n1 / n2 * sin(angleWithNormal));
 
     // Converting to Global Co-ords
-    float globalRefractedAngle;
     if (ray.getDirection().cross(normal) > 0) 
-        globalRefractedAngle = normal.angle() - refractedAngleWithNormal;
+        refractedAngle = normal.angle() - refractedAngle;
     else
-        globalRefractedAngle =  normal.angle() + refractedAngleWithNormal; 
+        refractedAngle =  normal.angle() + refractedAngle; 
     
-    return Vector2(cos(globalRefractedAngle),sin(globalRefractedAngle)); // return global angle vect
+    return Vector2(cos(refractedAngle),sin(refractedAngle)); // return global angle vect
 }
