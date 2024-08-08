@@ -15,7 +15,7 @@ Vector2 refractedAngle(float n1, float n2, Ray ray, Vector2 normal){
 
     float refractedAngleWithNormal;
     if ((n1 > n2) && (angleWithNormal > asin(n2 / n1))) // Total Internal Reflection
-        refractedAngleWithNormal = -angleWithNormal;
+        refractedAngleWithNormal = -angleWithNormal; //TODO FIX THIS
     else
         refractedAngleWithNormal = asin(n1 / n2 * sin(angleWithNormal));
 

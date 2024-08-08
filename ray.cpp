@@ -19,7 +19,7 @@ HitInfo collisionDetectionGOOGOOGAGA(const Ray& ray, const vector<Vector2>& poin
         double u = diff.cross(ray.getDirection()) / det;
 
         // Check if the intersection occurs within the bounds of the ray and the line segment
-        if (t > 0 && u >= 0 && u <= 1) {
+        if (t > 1e-8 && u >= 0 && u <= 1) {
             Vector2 hitPoint = ray.getPos() + ray.getDirection() * t;
             Vector2 lineNormal = Vector2(-lineDir.y, lineDir.x).normalized(); // Perpendicular to the line
 

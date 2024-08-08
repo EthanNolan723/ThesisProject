@@ -25,12 +25,13 @@ Vector2 RndDir(){ // Temp
 int WinMain(int argc, char* argv[]){
     vector<Ray> testRays;
     testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(0.0, 1.0), 0));
-    //testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(1.0, 1.0), 0));
+    testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(1.0, 1.0), 0));
+    testRays.push_back(Ray(Vector2(600.0, 900.0), Vector2(0.0, -1.0), 0));
 
     vector<Layer> testLayers;
     testLayers.push_back(Layer(1.1, { Vector2(100, 600), Vector2(900, 600)}));
     testLayers.push_back(Layer(1.1, { Vector2(100, 700), Vector2(900, 700)}));
-    //testLayers.push_back(Layer(1.1, { Vector2(900, 600), Vector2(100, 1400)}));
+    testLayers.push_back(Layer(1.1, { Vector2(900, 700), Vector2(100, 900)}));
 
     for (const Ray& ray : testRays){ // Testing Refraction
         cout << 180 * refractedAngle(1, 1.1, ray, Vector2(0,1)).angle() / PI << " ";
@@ -41,7 +42,7 @@ int WinMain(int argc, char* argv[]){
     size_t i = 0;
     while (i < testRays.size()){
         Ray& ray = testRays[i];
-        if (ray.getBounces() < 3){
+        if (ray.getBounces() < 6){
             HitInfo closestHit;
             closestHit.didHit = false;
             for (const Layer& layer : testLayers){
@@ -50,10 +51,11 @@ int WinMain(int argc, char* argv[]){
                     closestHit = hit;
                 }
             }
-            // Add Refracted Ray to end of vecotr (FIFO)
-            //TODO add in refraction angle code
-            //TODO don't add to end if no collision
-            testRays.push_back(Ray(closestHit.hitPoint, Vector2(1,1), ray.getBounces()+1));
+            // TODO correct the refractive index changes
+            if (closestHit.didHit){
+                Vector2 newAngle = refractedAngle(1, 1.1, ray, closestHit.normal);
+                testRays.push_back(Ray(closestHit.hitPoint, newAngle, ray.getBounces()+1));
+            }
         }
         ++i;
     }
@@ -104,7 +106,7 @@ int WinMain(int argc, char* argv[]){
         // Draw Rays
         SDL_SetRenderDrawColor(renderer,255,0,0,255);
         for (const Ray& ray : testRays) {
-            ray.draw(renderer, 100);
+            ray.draw(renderer, 75);
         }
         //Draw Layers
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
