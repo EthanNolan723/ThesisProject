@@ -26,6 +26,7 @@ int WinMain(int argc, char* argv[]){
     vector<Ray> testRays;
     testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(0.0, 1.0), 0));
     testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(1.0, 1.0), 0));
+    testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(-1.0, 1.0), 0));
     testRays.push_back(Ray(Vector2(600.0, 900.0), Vector2(0.0, -1.0), 0));
 
     vector<Layer> testLayers;
@@ -53,7 +54,7 @@ int WinMain(int argc, char* argv[]){
             }
             // TODO correct the refractive index changes
             if (closestHit.didHit){
-                Vector2 newAngle = refractedAngle(1, 1.1, ray, closestHit.normal);
+                Vector2 newAngle = refractedAngle(2, 1.1, ray, closestHit.normal);
                 testRays.push_back(Ray(closestHit.hitPoint, newAngle, ray.getBounces()+1));
             }
         }

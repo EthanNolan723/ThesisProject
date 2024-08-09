@@ -11,9 +11,9 @@ Vector2 refractedAngle(float n1, float n2, Ray ray, Vector2 normal){
         dotProduct = ray.getDirection().dot(normal);
     }
 
-    float angleWithNormal = acos(dotProduct / (ray.getDirection().length() * normal.length()));
+    double angleWithNormal = acos(dotProduct / (ray.getDirection().length() * normal.length()));
 
-    float refractedAngle;
+    double refractedAngle;
     if ((n1 > n2) && (angleWithNormal > asin(n2 / n1))){ // Reflection
         if (ray.getDirection().cross(normal) > 0)
             refractedAngle = normal.angle() + PI + angleWithNormal;
