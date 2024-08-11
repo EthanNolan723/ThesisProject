@@ -24,17 +24,21 @@ Vector2 RndDir(){ // Temp
 
 int WinMain(int argc, char* argv[]){
     vector<Ray> testRays;
-    testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(0.0, 1.0), 0, 2));
-    testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(1.0, 1.0), 0, 2));
-    testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(-1.0, 1.0), 0, 2));
-    testRays.push_back(Ray(Vector2(600.0, 900.0), Vector2(0.0, -1.0), 0, 2));
+    testRays.push_back(Ray(Vector2(500.0, 550.0), Vector2(0.0, 1.0), 0, 2));
+    testRays.push_back(Ray(Vector2(500.0, 550.0), Vector2(1.0, 1.0), 0, 2));
+    testRays.push_back(Ray(Vector2(500.0, 550.0), Vector2(-1.0, 1.0), 0, 2));
+    testRays.push_back(Ray(Vector2(500.0, 550.0), Vector2(0.0, -1.0), 0, 2));
 
     vector<Layer> testLayers; //! MUST DEFINE LINES LEFT TO RIGHT FOR CORRECT NORMAL OF LAYERS
-    testLayers.push_back(Layer(1.1, { Vector2(100, 600), Vector2(900, 600)}, Refractive));
-    testLayers.push_back(Layer(1.1, { Vector2(100, 700), Vector2(900, 700)}, Refractive));
-    testLayers.push_back(Layer(1.1, { Vector2(900, 700), Vector2(100, 900)}, Refractive));
+    testLayers.push_back(Layer( { Vector2(100, 400), Vector2(900, 400)}, Reflective)); // metal - Bphen
+    testLayers.push_back(Layer( { Vector2(100, 500), Vector2(900, 500)}, Refractive)); // Bphen - Irppy
+    testLayers.push_back(Layer( { Vector2(100, 600), Vector2(900, 600)}, Refractive)); // Irppy - TCTA
+    testLayers.push_back(Layer( { Vector2(100, 700), Vector2(900, 700)}, Refractive)); // TCTA - ITO
+    testLayers.push_back(Layer( { Vector2(100, 800), Vector2(900, 800)}, Refractive)); // ITO - Glass
+    testLayers.push_back(Layer( { Vector2(100, 900), Vector2(900, 900)}, Refractive)); // Glass - Air
 
-    vector<float> refractiveIndexes = {1.710, 1.69, 1.718, 1.8270, 1.5, 1}; // All refractive Indexes, Bphen, irrpy, TCTA , ITO, glass, Air
+    vector<float> refractiveIndexes = {1.710, 1.69, 1.718, 1.8270, 1.5, 1}; // All refractive Indexes, Bphen, irppy, TCTA , ITO, glass, Air
+    // vector<float> refractiveIndexes = {1.710, 1.69, 4, 3, 2, 1};
 
     for (const Ray& ray : testRays){ // Testing Refraction
         std::cout << 180 * refractedAngle(1, 1.1, ray, Vector2(0,1)).direction.angle() / PI << " ";
@@ -61,8 +65,9 @@ int WinMain(int argc, char* argv[]){
                 int newRefLayerIndex = ray.getRefLayerIndex();
                 switch (closestHit.type){
                 case 0: // Refractive Layer
-                    newAngle = refractedAngle(ray.getRefLayerIndex(), 
-                                             (ray.getDirection().dot(closestHit.normal) > 0) ? ray.getRefLayerIndex() + 1 : ray.getRefLayerIndex() - 1,
+                    newAngle = refractedAngle(refractiveIndexes[ray.getRefLayerIndex()], 
+                                             (ray.getDirection().dot(closestHit.normal) > 0) ? refractiveIndexes[ray.getRefLayerIndex() + 1] : 
+                                              refractiveIndexes[ray.getRefLayerIndex() - 1],
                                               ray, closestHit.normal);
                     if (newAngle.type == REFRACTION) {
                         if (ray.getDirection().dot(closestHit.normal) > 0)
@@ -71,11 +76,21 @@ int WinMain(int argc, char* argv[]){
                             newRefLayerIndex -= 1; // Moving Down
                     }
                     testRays.push_back(Ray(closestHit.hitPoint, newAngle.direction, ray.getBounces() + 1, newRefLayerIndex));
-                    
                     break;
 
-                // case 1: // Reflective
-                //     break;
+                case 1: // Reflective
+                    if (ray.getDirection().cross(closestHit.normal) == 0) // TODO Refactor into Refraction Code
+                        newAngle.direction = -ray.getDirection();
+                    else if (ray.getDirection().cross(closestHit.normal) > 0){
+                        double angleWithNormal = acos(ray.getDirection().dot(closestHit.normal) / (ray.getDirection().length() * closestHit.normal.length()));
+                        newAngle.direction = Vector2(cos(closestHit.normal.angle() + PI + angleWithNormal), sin(closestHit.normal.angle() + PI + angleWithNormal));
+                    }
+                    else{
+                        double angleWithNormal = acos(ray.getDirection().dot(closestHit.normal) / (ray.getDirection().length() * closestHit.normal.length()));
+                        newAngle.direction = Vector2(cos(closestHit.normal.angle() + PI + angleWithNormal), sin(closestHit.normal.angle() + PI + angleWithNormal));
+                    }
+                    testRays.push_back(Ray(closestHit.hitPoint, newAngle.direction, ray.getBounces() + 1, ray.getRefLayerIndex()));
+                    break;
                 // case 2: // Transport (move to other side)
                 //     break;
                 default:
