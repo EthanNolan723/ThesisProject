@@ -24,20 +24,22 @@ Vector2 RndDir(){ // Temp
 
 int WinMain(int argc, char* argv[]){
     vector<Ray> testRays;
-    testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(0.0, 1.0), 0));
-    testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(1.0, 1.0), 0));
-    testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(-1.0, 1.0), 0));
-    testRays.push_back(Ray(Vector2(600.0, 900.0), Vector2(0.0, -1.0), 0));
+    testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(0.0, 1.0), 0, 2));
+    testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(1.0, 1.0), 0, 2));
+    testRays.push_back(Ray(Vector2(500.0, 500.0), Vector2(-1.0, 1.0), 0, 2));
+    testRays.push_back(Ray(Vector2(600.0, 900.0), Vector2(0.0, -1.0), 0, 2));
 
-    vector<Layer> testLayers;
-    testLayers.push_back(Layer(1.1, { Vector2(100, 600), Vector2(900, 600)}));
-    testLayers.push_back(Layer(1.1, { Vector2(100, 700), Vector2(900, 700)}));
-    testLayers.push_back(Layer(1.1, { Vector2(900, 700), Vector2(100, 900)}));
+    vector<Layer> testLayers; //! MUST DEFINE LINES LEFT TO RIGHT FOR CORRECT NORMAL OF LAYERS
+    testLayers.push_back(Layer(1.1, { Vector2(100, 600), Vector2(900, 600)}, Refractive));
+    testLayers.push_back(Layer(1.1, { Vector2(100, 700), Vector2(900, 700)}, Refractive));
+    testLayers.push_back(Layer(1.1, { Vector2(900, 700), Vector2(100, 900)}, Refractive));
+
+    vector<float> refractiveIndexes = {1.710, 1.69, 1.718, 1.8270, 1.5, 1}; // All refractive Indexes, Bphen, irrpy, TCTA , ITO, glass, Air
 
     for (const Ray& ray : testRays){ // Testing Refraction
-        cout << 180 * refractedAngle(1, 1.1, ray, Vector2(0,1)).angle() / PI << " ";
-        cout << 180 * refractedAngle(1, 1.1, ray, Vector2(-1,-1).normalized()).angle() / PI << " ";
-        cout << 180 * refractedAngle(1, 1.1, ray, Vector2(1,1).normalized()).angle() / PI << "\n";
+        std::cout << 180 * refractedAngle(1, 1.1, ray, Vector2(0,1)).direction.angle() / PI << " ";
+        std::cout << 180 * refractedAngle(1, 1.1, ray, Vector2(-1,-1).normalized()).direction.angle() / PI << " ";
+        std::cout << 180 * refractedAngle(1, 1.1, ray, Vector2(1,1).normalized()).direction.angle() / PI << "\n";
     } // 90 85.0027 85.0027 /n 49.9973 45 45
     
     size_t i = 0;
@@ -47,16 +49,46 @@ int WinMain(int argc, char* argv[]){
             HitInfo closestHit;
             closestHit.didHit = false;
             for (const Layer& layer : testLayers){
-                HitInfo hit = collisionDetectionGOOGOOGAGA(ray, layer.getPoints());
+                HitInfo hit = RAYNAME::collisionDetection(ray, layer.getPoints());
                 if (!closestHit.didHit || hit.distance < closestHit.distance){
                     closestHit = hit;
+                    closestHit.type = layer.getLayerType();
                 }
             }
             // TODO correct the refractive index changes
             if (closestHit.didHit){
-                Vector2 newAngle = refractedAngle(2, 1.1, ray, closestHit.normal);
-                testRays.push_back(Ray(closestHit.hitPoint, newAngle, ray.getBounces()+1));
+                RefractedRay newAngle;
+                int newRefLayerIndex = ray.getRefLayerIndex();
+                switch (closestHit.type){
+                case 0: // Refractive Layer
+                    newAngle = refractedAngle(ray.getRefLayerIndex(), 
+                                             (ray.getDirection().dot(closestHit.normal) > 0) ? ray.getRefLayerIndex() + 1 : ray.getRefLayerIndex() - 1,
+                                              ray, closestHit.normal);
+                    if (newAngle.type == REFRACTION) {
+                        if (ray.getDirection().dot(closestHit.normal) > 0)
+                            newRefLayerIndex += 1; // Moving Up (towards Air)
+                        else
+                            newRefLayerIndex -= 1; // Moving Down
+                    }
+                    testRays.push_back(Ray(closestHit.hitPoint, newAngle.direction, ray.getBounces() + 1, newRefLayerIndex));
+                    
+                    break;
+
+                // case 1: // Reflective
+                //     break;
+                // case 2: // Transport (move to other side)
+                //     break;
+                default:
+                    break;
+                }
             }
+            /*
+            !redesign
+            Absorption chance roll
+            Reflection chance roll
+            Refraction -> reflect or refract
+
+            */
         }
         ++i;
     }
@@ -109,6 +141,8 @@ int WinMain(int argc, char* argv[]){
         for (const Ray& ray : testRays) {
             ray.draw(renderer, 75);
         }
+
+
         //Draw Layers
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
         for (const Layer& layer : testLayers){
@@ -123,9 +157,9 @@ int WinMain(int argc, char* argv[]){
     SDL_DestroyWindow(window);
     SDL_Quit();
 
-    cout << "\nend\n";
+    std::cout << "\nend\n";
     string test; // Leave consol open
-    cin >> test;
+    std::cin >> test;
     return 0;
 }
 
