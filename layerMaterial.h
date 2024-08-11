@@ -15,7 +15,6 @@ enum layerType {
 struct Layer{
 private:
     vector<Vector2> points;
-    float refractiveIndex;
     enum layerType type;
     // reflection
     // flip sides (left right for inf size)
@@ -23,13 +22,12 @@ private:
 
 public:
     // Constructors
-    Layer() : points(), refractiveIndex(1.0f), type(Refractive) {}
-    Layer(float refrIndex, const vector<Vector2>& pts, layerType layerType)
-        : points(pts), refractiveIndex(refrIndex), type(layerType) {}
+    Layer() : points(), type(Refractive) {}
+    Layer( const vector<Vector2>& pts, layerType layerType)
+        : points(pts), type(layerType) {}
 
     // Accessors
     const vector<Vector2>& getPoints() const { return points; }
-    float getRefInd() const { return refractiveIndex; }
     layerType getLayerType() const { return type; }
 
     // Method to add a point
