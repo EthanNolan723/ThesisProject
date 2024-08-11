@@ -8,6 +8,16 @@
 #define PI acos(-1)
 using namespace std;
 
-Vector2 refractedAngle(float n1, float n2, Ray ray, Vector2 normal);
+enum InteractionType {
+    REFRACTION,
+    REFLECTION
+};
+
+struct RefractedRay {
+    Vector2 direction;
+    InteractionType type;
+};
+
+RefractedRay refractedAngle(float n1, float n2, Ray ray, Vector2 normal);
 
 #endif
