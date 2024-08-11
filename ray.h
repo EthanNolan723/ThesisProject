@@ -4,6 +4,7 @@
 #include "Vector2.h"
 #include <vector>
 #include <SDL2/SDL.h>
+#include "layerMaterial.h"
 
 using namespace std;
 
@@ -12,15 +13,18 @@ private:
     Vector2 position;
     Vector2 direction;
     int bounces;
+    int refractiveLayerIndex;
 public:
     // Constructors
     Ray() : position(0.0, 0.0), direction(0.0, 0.0), bounces(0) {}
-    Ray(const Vector2& origin, const Vector2& direction, const int bounces) : position(origin), direction(direction.normalized()), bounces(bounces) {}
+    Ray(const Vector2& origin, const Vector2& direction, const int bounces, const int refractiveLayerIndex) :
+    position(origin), direction(direction.normalized()), bounces(bounces), refractiveLayerIndex(refractiveLayerIndex){}
 
     // Accessors
     Vector2 getPos() const { return position; }
     Vector2 getDirection() const { return direction; }
     int getBounces() const { return bounces; }
+    int getRefLayerIndex() const { return refractiveLayerIndex; }
 
     // Method to get a point along the ray at parameter t
     Vector2 step(double t) const {
@@ -38,8 +42,12 @@ struct HitInfo{  // If ray hits a object
     double distance;
     Vector2 hitPoint;
     Vector2 normal;
+    enum layerType type;
 };
 
-HitInfo collisionDetectionGOOGOOGAGA(const Ray& ray, const vector<Vector2>& points);
+namespace RAYNAME{
+    HitInfo collisionDetection(const Ray& ray, const std::vector<Vector2>& points);
+};
+
 
 #endif // RAY_H
