@@ -23,11 +23,16 @@ Vector2 RndDir(){ // Temp
 }
 
 int WinMain(int argc, char* argv[]){
+    int start = clock();
     vector<Ray> testRays;
-    testRays.push_back(Ray(Vector2(500.0, 550.0), Vector2(0.0, 1.0), 0, 2));
-    testRays.push_back(Ray(Vector2(500.0, 550.0), Vector2(1.0, 1.0), 0, 2));
-    testRays.push_back(Ray(Vector2(500.0, 550.0), Vector2(-1.0, 1.0), 0, 2));
-    testRays.push_back(Ray(Vector2(500.0, 550.0), Vector2(0.0, -1.0), 0, 2));
+    testRays.push_back(Ray(Vector2(500.0, 550.0), Vector2(0.0, 1.0), 0, 1));
+    testRays.push_back(Ray(Vector2(500.0, 550.0), Vector2(1.0, 1.0), 0, 1));
+    testRays.push_back(Ray(Vector2(500.0, 550.0), Vector2(-1.0, 1.0), 0, 1));
+    testRays.push_back(Ray(Vector2(500.0, 550.0), Vector2(0.01, -1.0), 0, 1));
+
+    for (int i = 0; i < 512; i++){ // Generating Random Rays
+        testRays.push_back(Ray(Vector2(500, 550), RndDir(), 0, 1));
+    }
 
     vector<Layer> testLayers; //! MUST DEFINE LINES LEFT TO RIGHT FOR CORRECT NORMAL OF LAYERS
     testLayers.push_back(Layer( { Vector2(100, 400), Vector2(900, 400)}, Reflective)); // metal - Bphen
@@ -36,6 +41,8 @@ int WinMain(int argc, char* argv[]){
     testLayers.push_back(Layer( { Vector2(100, 700), Vector2(900, 700)}, Refractive)); // TCTA - ITO
     testLayers.push_back(Layer( { Vector2(100, 800), Vector2(900, 800)}, Refractive)); // ITO - Glass
     testLayers.push_back(Layer( { Vector2(100, 900), Vector2(900, 900)}, Refractive)); // Glass - Air
+    testLayers.push_back(Layer( { Vector2(900, 400), Vector2(900, 900)}, Reflective)); // ITO - Glass
+    testLayers.push_back(Layer( { Vector2(100, 400), Vector2(100, 900)}, Reflective)); // Glass - Air
 
     vector<float> refractiveIndexes = {1.710, 1.69, 1.718, 1.8270, 1.5, 1}; // All refractive Indexes, Bphen, irppy, TCTA , ITO, glass, Air
     // vector<float> refractiveIndexes = {1.710, 1.69, 4, 3, 2, 1};
@@ -87,7 +94,7 @@ int WinMain(int argc, char* argv[]){
                     }
                     else{
                         double angleWithNormal = acos(ray.getDirection().dot(closestHit.normal) / (ray.getDirection().length() * closestHit.normal.length()));
-                        newAngle.direction = Vector2(cos(closestHit.normal.angle() + PI + angleWithNormal), sin(closestHit.normal.angle() + PI + angleWithNormal));
+                        newAngle.direction = Vector2(cos(closestHit.normal.angle() + PI - angleWithNormal), sin(closestHit.normal.angle() + PI - angleWithNormal));
                     }
                     testRays.push_back(Ray(closestHit.hitPoint, newAngle.direction, ray.getBounces() + 1, ray.getRefLayerIndex()));
                     break;
@@ -107,6 +114,9 @@ int WinMain(int argc, char* argv[]){
         }
         ++i;
     }
+
+    int end = clock();
+    std::cout << double(end-start)/CLOCKS_PER_SEC;
 
     //Create Empty Window
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
