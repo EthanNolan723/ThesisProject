@@ -9,8 +9,9 @@ using namespace std;
 enum layerType {
     Refractive,
     Reflective,
-    Transport,
-    Outcoupled
+    Outcoupled,
+    LeftWall,
+    RightWall
 };
 
 struct Layer{
@@ -37,9 +38,6 @@ public:
     }
 
     void draw(SDL_Renderer* renderer) const {
-        // Set the color for drawing (here, we choose white, but you can change it)
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
         // Draw lines between consecutive points
         for (size_t i = 0; i < points.size() - 1; ++i) {
             SDL_RenderDrawLine(renderer, points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
