@@ -2,12 +2,12 @@
 #include <cmath>
 
 namespace RAYNAME{
-    HitInfo collisionDetection(const Ray& ray, const std::vector<Vector2>& points) {
+    HitInfo collisionDetection(const Ray& ray, const Layer& layer) {
         HitInfo closestHit;
         closestHit.didHit = false;
 
-        for (size_t i = 0; i < points.size() - 1; ++i) {
-            Vector2 lineDir = points[i+1] - points[i];
+        for (size_t i = 0; i < layer.getPoints().size() - 1; ++i) {
+            Vector2 lineDir = layer.getPoints()[i+1] - layer.getPoints()[i];
 
             // Calculate the determinants
             double det = lineDir.cross(ray.getDirection());
@@ -15,7 +15,7 @@ namespace RAYNAME{
                 continue;
             }
 
-            Vector2 diff = ray.getPos() - points[i];
+            Vector2 diff = ray.getPos() - layer.getPoints()[i];
             double t = diff.cross(lineDir) / det;
             double u = diff.cross(ray.getDirection()) / det;
 
@@ -29,6 +29,7 @@ namespace RAYNAME{
                     closestHit.distance = t;
                     closestHit.hitPoint = hitPoint;
                     closestHit.normal = lineNormal;
+                    closestHit.type = layer.getLayerType();
                 }
             }
         }

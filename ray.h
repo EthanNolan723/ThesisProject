@@ -46,7 +46,7 @@ struct HitInfo{  // If ray hits a object
 };
 
 namespace RAYNAME{
-    HitInfo collisionDetection(const Ray& ray, const std::vector<Vector2>& points);
+    HitInfo collisionDetection(const Ray& ray, const Layer& layer);
 };
 
 

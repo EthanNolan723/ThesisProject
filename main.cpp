@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <random>
 #include "refraction.h"
 #include "ray.h"
 #include "Vector2.h"
@@ -22,36 +23,59 @@ Vector2 RndDir(){ // Temp
     return Vector2(sin(randAngle), cos(randAngle));
 }
 
+int getRandomInt() {
+    random_device rd; // Seed for the random number engine
+    mt19937 gen(rd()); // Mersenne Twister engine
+    uniform_int_distribution<> distr(0, 255); // Define range 0-255
+
+    return distr(gen);
+}
+
+bool areDoublesEqual(double a, double b, double epsilon = 1e-8) { // Temp
+    return fabs(a - b) < epsilon;
+}
+
 int WinMain(int argc, char* argv[]){
     int start = clock();
     int outcouplingCount = 0;
     vector<Ray> RAYS;
     vector<Ray> testRays;
-    testRays.push_back(Ray(Vector2(500.0, 350.0), Vector2(0.0, 1.0), 0, 1));
+    // testRays.push_back(Ray(Vector2(200.0, 100.0), Vector2(-1.0, 1.0), 0, 0));
+    // testRays.push_back(Ray(Vector2(200.0, 100.0), Vector2(-2.0, 1.0), 0, 0));
     // testRays.push_back(Ray(Vector2(500.0, 550.0), Vector2(1.0, 1.0), 0, 1));
     // testRays.push_back(Ray(Vector2(500.0, 550.0), Vector2(-1.0, 1.0), 0, 1));
     // testRays.push_back(Ray(Vector2(500.0, 550.0), Vector2(0.01, -1.0), 0, 1));
+    // testRays.push_back(Ray(Vector2(500, 350), Vector2(1.0, 0.1), 0, 1));
 
-    // RAYS.insert(RAYS.end(), testRays.begin(), testRays.end());
+    RAYS.insert(RAYS.end(), testRays.begin(), testRays.end());
 
-    for (int i = 0; i < 1024; i++){ // Generating Random Rays
+    for (int i = 0; i < 548; i++){ //! Generating Random Rays
         RAYS.push_back(Ray(Vector2(500, 350), RndDir(), 0, 1));
     }
 
-    vector<Layer> testLayers; //! MUST DEFINE LINES LEFT TO RIGHT FOR CORRECT NORMAL OF LAYERS
-    testLayers.push_back(Layer( { Vector2(100, 200), Vector2(900, 200)}, Reflective)); // metal - Bphen
-    testLayers.push_back(Layer( { Vector2(100, 300), Vector2(900, 300)}, Refractive)); // Bphen - Irppy
-    testLayers.push_back(Layer( { Vector2(100, 400), Vector2(900, 400)}, Refractive)); // Irppy - TCTA
-    testLayers.push_back(Layer( { Vector2(100, 500), Vector2(900, 500)}, Refractive)); // TCTA - ITO
-    testLayers.push_back(Layer( { Vector2(100, 600), Vector2(900, 600)}, Refractive)); // ITO - Glass
-    testLayers.push_back(Layer( { Vector2(100, 700), Vector2(900, 700)}, Refractive)); // Glass - Air
-    testLayers.push_back(Layer( { Vector2( 50, 710), Vector2(950, 710)}, Outcoupled));
-    testLayers.push_back(Layer( { Vector2(900, 200), Vector2(900, 700)}, Reflective)); // sides
-    testLayers.push_back(Layer( { Vector2(100, 200), Vector2(100, 700)}, Reflective)); // sides
-    testLayers.push_back(Layer( { Vector2( 50, 700), Vector2(50, 100), Vector2(950, 100), Vector2(950, 700)}, Reflective)); // sides
+    vector<Layer> OLEDLayers; //! MUST DEFINE LINES LEFT TO RIGHT FOR CORRECT NORMAL OF LAYERS
+    vector<Layer> BarrierLayers; //! MUST DEFINE LINES LEFT TO RIGHT FOR CORRECT NORMAL OF LAYERS
 
+    //! Basic Set Up of Irppy Design (maybe)
+    OLEDLayers.push_back(Layer( { Vector2(100, 200), Vector2(900, 200)}, Reflective)); // metal - Bphen
+    OLEDLayers.push_back(Layer( { Vector2(100, 300), Vector2(900, 300)}, Refractive)); // Bphen - Irppy
+    OLEDLayers.push_back(Layer( { Vector2(100, 400), Vector2(900, 400)}, Refractive)); // Irppy - TCTA
+    OLEDLayers.push_back(Layer( { Vector2(100, 500), Vector2(900, 500)}, Refractive)); // TCTA - ITO
+    OLEDLayers.push_back(Layer( { Vector2(100, 600), Vector2(900, 600)}, Refractive)); // ITO - Glass
+    OLEDLayers.push_back(Layer( { Vector2(100, 700), Vector2(900, 700)}, Refractive)); // Glass - Air
+    OLEDLayers.push_back(Layer( { Vector2( 50, 710), Vector2(950, 710)}, Outcoupled));
+    BarrierLayers.push_back(Layer( { Vector2(900, 200), Vector2(900, 700)}, RightWall)); // sides
+    BarrierLayers.push_back(Layer( { Vector2(100, 200), Vector2(100, 700)}, LeftWall)); // sides
+    OLEDLayers.push_back(Layer( { Vector2( 50, 700), Vector2(50, 100), Vector2(950, 100), Vector2(950, 700)}, Reflective)); // testing Outside
+
+    // //! Testing Corner Itersection
+    // BarrierLayers.push_back(Layer( { Vector2(100,100), Vector2(100,400)}, Transport));
+    // OLEDLayers.push_back(Layer( { Vector2(100,200), Vector2(300,200)}, Refractive));
+
+    // !Irppy
     vector<float> refractiveIndexes = {1.710, 1.69, 1.718, 1.8270, 1.5, 1}; // All refractive Indexes, Bphen, irppy, TCTA , ITO, glass, Air
     // vector<float> refractiveIndexes = {1.710, 1.69, 4, 3, 2, 1};
+    // vector<float> refractiveIndexes = {1.7, 1};
 
     for (const Ray& ray : RAYS){ // Testing Refraction
         std::cout << 180 * refractedAngle(1, 1.1, ray, Vector2(0,1)).direction.angle() / PI << " ";
@@ -62,17 +86,25 @@ int WinMain(int argc, char* argv[]){
     size_t i = 0;
     while (i < RAYS.size()){
         Ray& ray = RAYS[i];
-        if (ray.getBounces() < 1000){
+        if (ray.getBounces() < 30){
             HitInfo closestHit;
             closestHit.didHit = false;
-            for (const Layer& layer : testLayers){ // Go through Layers Of Device
-                HitInfo hit = RAYNAME::collisionDetection(ray, layer.getPoints());
+            for (const Layer& layer : OLEDLayers){ // Go through Layers Of Device
+                HitInfo hit = RAYNAME::collisionDetection(ray, layer);
                 if (!closestHit.didHit || hit.distance < closestHit.distance){
                     closestHit = hit;
-                    closestHit.type = layer.getLayerType();
                 }
             }
-            // TODO Check if ray hits a side (edge case : )
+            for (const Layer& layer : BarrierLayers){ // ? Assumes you can't hit a refractive layer AFTER a transport layer
+                HitInfo hit = RAYNAME::collisionDetection(ray, layer);
+                if (!closestHit.didHit || hit.distance < (closestHit.distance - 1e-8)){ // If it collides 0.1f before the layer
+                    closestHit = hit;
+                    closestHit.hitPoint += (hit.type == LeftWall) ? Vector2(800, 0) : Vector2(-800, 0);
+                }
+                else if (hit.didHit && areDoublesEqual(hit.distance, closestHit.distance)){
+                    closestHit.hitPoint += (hit.type == LeftWall) ? Vector2(800, 0) : Vector2(-800, 0); // Check if it is left or right
+                }
+            }
             if (closestHit.didHit){
                 RefractedRay newAngle;
                 int newRefLayerIndex = ray.getRefLayerIndex();
@@ -105,11 +137,14 @@ int WinMain(int argc, char* argv[]){
                     }
                     RAYS.push_back(Ray(closestHit.hitPoint, newAngle.direction, ray.getBounces() + 1, ray.getRefLayerIndex()));
                     break;
-                // case 2: // Transport (move to other side)
-                //     break;
-                case 3: // Exit
+
+                case 2: // Exit
                     // add to outcoupling counter
                     outcouplingCount++;
+                    break;
+                case 3:
+                case 4:
+                    RAYS.push_back(Ray(closestHit.hitPoint, ray.getDirection(), ray.getBounces() + 1, ray.getRefLayerIndex()));
                     break;
                 default:
                     break;
@@ -120,7 +155,6 @@ int WinMain(int argc, char* argv[]){
             Absorption chance roll
             Reflection chance roll
             Refraction -> reflect or refract
-
             */
         }
         ++i;
@@ -128,7 +162,7 @@ int WinMain(int argc, char* argv[]){
 
     int end = clock();
     std::cout << double(end-start)/CLOCKS_PER_SEC;
-    cout << '\n' << ">>" << outcouplingCount;
+    std::cout << '\n' << ">>" << outcouplingCount;
 
     //Create Empty Window
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -163,29 +197,34 @@ int WinMain(int argc, char* argv[]){
     // Main event loop
     bool running = true;
     SDL_Event event;
+    // Clear screen
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+
+        // Draw Rays
+        for (const Ray& ray : RAYS) {
+            SDL_SetRenderDrawColor(renderer,getRandomInt(),getRandomInt(),getRandomInt(),255);
+            ray.draw(renderer, 75);
+        }
+
+        //Draw Layers
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        for (const Layer& layer : OLEDLayers){
+            layer.draw(renderer);
+        }
+        SDL_SetRenderDrawColor(renderer, 20, 60, 255, 255);
+        for (const Layer& layer : BarrierLayers){
+            layer.draw(renderer);
+        }
+        
+        SDL_RenderPresent(renderer);
     while (running) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 running = false;
             }
         }
-        // Clear screen
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
-
-        // Draw Rays
-        SDL_SetRenderDrawColor(renderer,255,0,0,255);
-        for (const Ray& ray : RAYS) {
-            ray.draw(renderer, 75);
-        }
-
-        //Draw Layers
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-        for (const Layer& layer : testLayers){
-            layer.draw(renderer);
-        }
         
-        SDL_RenderPresent(renderer);
     }
 
     // Clean up and quit SDL
