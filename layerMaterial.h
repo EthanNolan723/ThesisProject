@@ -9,7 +9,8 @@ using namespace std;
 enum layerType {
     Refractive,
     Reflective,
-    Transport
+    Transport,
+    Outcoupled
 };
 
 struct Layer{
