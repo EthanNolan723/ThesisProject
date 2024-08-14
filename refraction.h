@@ -20,4 +20,6 @@ struct RefractedRay {
 
 RefractedRay refractedAngle(float n1, float n2, Ray ray, Vector2 normal);
 
+Vector2 Reflection(const Ray& ray, const Vector2& normal);
+
 #endif

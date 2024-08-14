@@ -124,17 +124,7 @@ int WinMain(int argc, char* argv[]){
                     break;
 
                 case 1: // Reflective
-                    // Add chance to reflect dice roll
-                    if (ray.getDirection().cross(closestHit.normal) == 0) // TODO Refactor into Refraction Code
-                        newAngle.direction = -ray.getDirection();
-                    else if (ray.getDirection().cross(closestHit.normal) > 0){
-                        double angleWithNormal = acos(ray.getDirection().dot(closestHit.normal) / (ray.getDirection().length() * closestHit.normal.length()));
-                        newAngle.direction = Vector2(cos(closestHit.normal.angle() + PI + angleWithNormal), sin(closestHit.normal.angle() + PI + angleWithNormal));
-                    }
-                    else{
-                        double angleWithNormal = acos(ray.getDirection().dot(closestHit.normal) / (ray.getDirection().length() * closestHit.normal.length()));
-                        newAngle.direction = Vector2(cos(closestHit.normal.angle() + PI - angleWithNormal), sin(closestHit.normal.angle() + PI - angleWithNormal));
-                    }
+                    newAngle.direction = Reflection(ray, closestHit.normal);
                     RAYS.push_back(Ray(closestHit.hitPoint, newAngle.direction, ray.getBounces() + 1, ray.getRefLayerIndex()));
                     break;
 
@@ -203,7 +193,7 @@ int WinMain(int argc, char* argv[]){
 
         // Draw Rays
         for (const Ray& ray : RAYS) {
-            SDL_SetRenderDrawColor(renderer,getRandomInt(),getRandomInt(),getRandomInt(),255);
+            SDL_SetRenderDrawColor(renderer, 255, 0, getRandomInt(),255);
             ray.draw(renderer, 75);
         }
 
