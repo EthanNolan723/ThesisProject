@@ -17,6 +17,7 @@ using namespace std;
 
 #define SDL_WINDOW_WIDTH 1000
 #define SDL_WINDOW_HEIGHT 1000
+#define TOTALRAYS 600
 
 Vector2 RndDir(){ // Temp
     double randAngle = 2*PI * rand() / (RAND_MAX + 1);
@@ -38,6 +39,7 @@ bool areDoublesEqual(double a, double b, double epsilon = 1e-8) { // Temp
 int WinMain(int argc, char* argv[]){
     int start = clock();
     int outcouplingCount = 0;
+    int lostRayCount = 0;
     vector<Ray> RAYS;
     vector<Ray> testRays;
     // testRays.push_back(Ray(Vector2(200.0, 100.0), Vector2(-1.0, 1.0), 0, 0));
@@ -49,7 +51,7 @@ int WinMain(int argc, char* argv[]){
 
     RAYS.insert(RAYS.end(), testRays.begin(), testRays.end());
 
-    for (int i = 0; i < 548; i++){ //! Generating Random Rays
+    for (int i = 0; i < TOTALRAYS; i++){ //! Generating Random Rays
         RAYS.push_back(Ray(Vector2(500, 350), RndDir(), 0, 1));
     }
 
@@ -74,6 +76,7 @@ int WinMain(int argc, char* argv[]){
 
     // !Irppy
     vector<float> refractiveIndexes = {1.710, 1.69, 1.718, 1.8270, 1.5, 1}; // All refractive Indexes, Bphen, irppy, TCTA , ITO, glass, Air
+    vector<float> extinctionCoeficients = {0, 1.08e5, 1.08e5, 1.08e5, 1.08e5, 0};
     // vector<float> refractiveIndexes = {1.710, 1.69, 4, 3, 2, 1};
     // vector<float> refractiveIndexes = {1.7, 1};
 
@@ -86,17 +89,17 @@ int WinMain(int argc, char* argv[]){
     size_t i = 0;
     while (i < RAYS.size()){
         Ray& ray = RAYS[i];
-        if (ray.getBounces() < 30){
+        if (ray.getBounces() < 300){
             HitInfo closestHit;
             closestHit.didHit = false;
             for (const Layer& layer : OLEDLayers){ // Go through Layers Of Device
-                HitInfo hit = RAYNAME::collisionDetection(ray, layer);
+                HitInfo hit = RAYNAMESPACE::collisionDetection(ray, layer);
                 if (!closestHit.didHit || hit.distance < closestHit.distance){
                     closestHit = hit;
                 }
             }
             for (const Layer& layer : BarrierLayers){ // ? Assumes you can't hit a refractive layer AFTER a transport layer
-                HitInfo hit = RAYNAME::collisionDetection(ray, layer);
+                HitInfo hit = RAYNAMESPACE::collisionDetection(ray, layer);
                 if (!closestHit.didHit || hit.distance < (closestHit.distance - 1e-8)){ // If it collides 0.1f before the layer
                     closestHit = hit;
                     closestHit.hitPoint += (hit.type == LeftWall) ? Vector2(800, 0) : Vector2(-800, 0);
@@ -107,6 +110,7 @@ int WinMain(int argc, char* argv[]){
             }
             if (closestHit.didHit){
                 RefractedRay newAngle;
+                bool generateNewRay = true;
                 int newRefLayerIndex = ray.getRefLayerIndex();
                 switch (closestHit.type){
                 case 0: // Refractive Layer
@@ -120,24 +124,38 @@ int WinMain(int argc, char* argv[]){
                         else
                             newRefLayerIndex -= 1; // Moving Down
                     }
-                    RAYS.push_back(Ray(closestHit.hitPoint, newAngle.direction, ray.getBounces() + 1, newRefLayerIndex));
                     break;
 
                 case 1: // Reflective
                     newAngle.direction = Reflection(ray, closestHit.normal);
-                    RAYS.push_back(Ray(closestHit.hitPoint, newAngle.direction, ray.getBounces() + 1, ray.getRefLayerIndex()));
+                    newRefLayerIndex = ray.getRefLayerIndex();
                     break;
 
                 case 2: // Exit
                     // add to outcoupling counter
+                    generateNewRay = false;
                     outcouplingCount++;
                     break;
+                    
                 case 3:
                 case 4:
-                    RAYS.push_back(Ray(closestHit.hitPoint, ray.getDirection(), ray.getBounces() + 1, ray.getRefLayerIndex()));
+                    newAngle.direction = ray.getDirection();
+                    newRefLayerIndex = ray.getRefLayerIndex();
                     break;
+
                 default:
                     break;
+                }
+
+                if (extinctionCoeficients[ray.getRefLayerIndex()] != 0 && generateNewRay){ //Assume intensity always = 100%
+                    if ((float) rand()/RAND_MAX > exp(-extinctionCoeficients[ray.getRefLayerIndex()] * closestHit.distance * 1e-9)){
+                        generateNewRay = false;
+                        lostRayCount++;
+                    }
+                        
+                }
+                if (generateNewRay){
+                    RAYS.push_back(Ray(closestHit.hitPoint, newAngle.direction, ray.getBounces() + 1, newRefLayerIndex));
                 }
             }
             /*
@@ -152,7 +170,10 @@ int WinMain(int argc, char* argv[]){
 
     int end = clock();
     std::cout << double(end-start)/CLOCKS_PER_SEC;
-    std::cout << '\n' << ">>" << outcouplingCount;
+    std::cout << '\n' << "Rays Out >>" << outcouplingCount;
+    std::cout << '\n' << "Rays lost>>" << lostRayCount;
+    std::cout << '\n' << "% out>>" << (float) outcouplingCount/TOTALRAYS;
+    std::cout << '\n' << "ray lost to bpunce>>" << -lostRayCount - outcouplingCount + TOTALRAYS;
 
     //Create Empty Window
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -162,12 +183,12 @@ int WinMain(int argc, char* argv[]){
 
     // Create a window
     SDL_Window* window = SDL_CreateWindow(
-        "SDL2 Window",                    // Window title
-        SDL_WINDOWPOS_CENTERED,           // Initial x position
-        SDL_WINDOWPOS_CENTERED,           // Initial y position
-        SDL_WINDOW_WIDTH,                 // Width in pixels
-        SDL_WINDOW_HEIGHT,                // Height in pixels
-        SDL_WINDOW_SHOWN                  // Flags
+        "SDL2 Window",                    
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOW_WIDTH,
+        SDL_WINDOW_HEIGHT,
+        SDL_WINDOW_SHOWN
     );
     if (window == nullptr) { // Window Doesn't Open
         cerr << "Failed to create window: " << SDL_GetError() << endl;

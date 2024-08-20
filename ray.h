@@ -45,7 +45,7 @@ struct HitInfo{  // If ray hits a object
     enum layerType type;
 };
 
-namespace RAYNAME{
+namespace RAYNAMESPACE{
     HitInfo collisionDetection(const Ray& ray, const Layer& layer);
 };
 

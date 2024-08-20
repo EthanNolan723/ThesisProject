@@ -49,5 +49,6 @@
         "unordered_map": "cpp",
         "xhash": "cpp",
         "algorithm": "cpp"
-    }
+    },
+    "makefile.configureOnOpen": true
 }

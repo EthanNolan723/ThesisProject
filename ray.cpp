@@ -1,7 +1,7 @@
 #include "ray.h"
 #include <cmath>
 
-namespace RAYNAME{
+namespace RAYNAMESPACE{
     HitInfo collisionDetection(const Ray& ray, const Layer& layer) {
         HitInfo closestHit;
         closestHit.didHit = false;
