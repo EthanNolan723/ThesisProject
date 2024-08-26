@@ -16,8 +16,9 @@
 using namespace std;
 
 #define SDL_WINDOW_WIDTH 1000
-#define SDL_WINDOW_HEIGHT 1000
+#define SDL_WINDOW_HEIGHT 1500
 #define TOTALRAYS 600
+#define OLEDWIDTH 800
 
 Vector2 RndDir(){ // Temp
     double randAngle = 2*PI * rand() / (RAND_MAX + 1);
@@ -52,12 +53,15 @@ int WinMain(int argc, char* argv[]){
     RAYS.insert(RAYS.end(), testRays.begin(), testRays.end());
 
     for (int i = 0; i < TOTALRAYS; i++){ //! Generating Random Rays
-        RAYS.push_back(Ray(Vector2(500, 350), RndDir(), 0, 1));
+        RAYS.push_back(Ray(Vector2(500, 185), RndDir(), 0, 0)); // distribution uniform vs normal - time dependent density theory - dft
+        // transition dipole moment 
+
+        //anisotropic light emmission oled material dft - perameter to adjust isotopic value, 1 (perfectly straight up), 0 perfectly isotropic
     }
 
     vector<Layer> OLEDLayers; //! MUST DEFINE LINES LEFT TO RIGHT FOR CORRECT NORMAL OF LAYERS
     vector<Layer> BarrierLayers; //! MUST DEFINE LINES LEFT TO RIGHT FOR CORRECT NORMAL OF LAYERS
-
+    /*
     //! Basic Set Up of Irppy Design (maybe)
     OLEDLayers.push_back(Layer( { Vector2(100, 200), Vector2(900, 200)}, Reflective)); // metal - Bphen
     OLEDLayers.push_back(Layer( { Vector2(100, 300), Vector2(900, 300)}, Refractive)); // Bphen - Irppy
@@ -69,14 +73,25 @@ int WinMain(int argc, char* argv[]){
     BarrierLayers.push_back(Layer( { Vector2(900, 200), Vector2(900, 700)}, RightWall)); // sides
     BarrierLayers.push_back(Layer( { Vector2(100, 200), Vector2(100, 700)}, LeftWall)); // sides
     OLEDLayers.push_back(Layer( { Vector2( 50, 700), Vector2(50, 100), Vector2(950, 100), Vector2(950, 700)}, Reflective)); // testing Outside
+    vector<float> refractiveIndexes = {1.710, 1.69, 1.718, 1.8270, 1.5, 1}; // All refractive Indexes, Bphen, irppy, TCTA , ITO, glass, Air
+    vector<float> extinctionCoeficients = {0, 1.08e5, 1.08e5, 1.08e5, 1.08e5, 0};
+    */
+    OLEDLayers.push_back(Layer( { Vector2(100, 100), Vector2(900, 100)}, Reflective)); // Metal - Organic
+    OLEDLayers.push_back(Layer( { Vector2(100, 290), Vector2(900, 290)}, Refractive)); // Organic - ITO
+    OLEDLayers.push_back(Layer( { Vector2(100, 440), Vector2(900, 440)}, Refractive)); // ITO - Glass
+    OLEDLayers.push_back(Layer( { Vector2(100, 1440), Vector2(900, 1440)}, Refractive)); // Glass - Air
+    
+    BarrierLayers.push_back(Layer( { Vector2(900, 100), Vector2(900, 1440)}, RightWall)); // sides
+    BarrierLayers.push_back(Layer( { Vector2(100, 100), Vector2(100, 1440)}, LeftWall)); // sides
+    OLEDLayers.push_back(Layer( { Vector2(40, 1440), Vector2(50, 1490), Vector2(950, 1490), Vector2(960, 1440)}, Outcoupled)); // Outcoupled
+    vector<float> refractiveIndexes = {1.78, 1.951, 1.5, 1};
+    vector<float> extinctionCoeficients = {0, 1.034e6, 0, 0}; // ! Actually Alpha value
 
     // //! Testing Corner Itersection
     // BarrierLayers.push_back(Layer( { Vector2(100,100), Vector2(100,400)}, Transport));
     // OLEDLayers.push_back(Layer( { Vector2(100,200), Vector2(300,200)}, Refractive));
 
-    // !Irppy
-    vector<float> refractiveIndexes = {1.710, 1.69, 1.718, 1.8270, 1.5, 1}; // All refractive Indexes, Bphen, irppy, TCTA , ITO, glass, Air
-    vector<float> extinctionCoeficients = {0, 1.08e5, 1.08e5, 1.08e5, 1.08e5, 0};
+    
     // vector<float> refractiveIndexes = {1.710, 1.69, 4, 3, 2, 1};
     // vector<float> refractiveIndexes = {1.7, 1};
 
@@ -100,12 +115,12 @@ int WinMain(int argc, char* argv[]){
             }
             for (const Layer& layer : BarrierLayers){ // ? Assumes you can't hit a refractive layer AFTER a transport layer
                 HitInfo hit = RAYNAMESPACE::collisionDetection(ray, layer);
-                if (!closestHit.didHit || hit.distance < (closestHit.distance - 1e-8)){ // If it collides 0.1f before the layer
+                if (!closestHit.didHit || hit.distance < (closestHit.distance - 1e-8)){ // If it collides before the layer
                     closestHit = hit;
-                    closestHit.hitPoint += (hit.type == LeftWall) ? Vector2(800, 0) : Vector2(-800, 0);
+                    closestHit.hitPoint += (hit.type == LeftWall) ? Vector2(OLEDWIDTH, 0) : Vector2(-OLEDWIDTH, 0);
                 }
-                else if (hit.didHit && areDoublesEqual(hit.distance, closestHit.distance)){
-                    closestHit.hitPoint += (hit.type == LeftWall) ? Vector2(800, 0) : Vector2(-800, 0); // Check if it is left or right
+                else if (hit.didHit && areDoublesEqual(hit.distance, closestHit.distance)){ // If they collide at the same point
+                    closestHit.hitPoint += (hit.type == LeftWall) ? Vector2(OLEDWIDTH, 0) : Vector2(-OLEDWIDTH, 0); // Check if it is left or right
                 }
             }
             if (closestHit.didHit){
@@ -114,11 +129,11 @@ int WinMain(int argc, char* argv[]){
                 int newRefLayerIndex = ray.getRefLayerIndex();
                 switch (closestHit.type){
                 case 0: // Refractive Layer
-                    newAngle = refractedAngle(refractiveIndexes[ray.getRefLayerIndex()], 
+                    newAngle = refractedAngle(refractiveIndexes[ray.getRefLayerIndex()],
                                              (ray.getDirection().dot(closestHit.normal) > 0) ? refractiveIndexes[ray.getRefLayerIndex() + 1] : 
                                               refractiveIndexes[ray.getRefLayerIndex() - 1],
                                               ray, closestHit.normal);
-                    if (newAngle.type == REFRACTION) {
+                    if (newAngle.type == REFRACTION) { // If light reflected update
                         if (ray.getDirection().dot(closestHit.normal) > 0)
                             newRefLayerIndex += 1; // Moving Up (towards Air)
                         else
@@ -129,6 +144,7 @@ int WinMain(int argc, char* argv[]){
                 case 1: // Reflective
                     newAngle.direction = Reflection(ray, closestHit.normal);
                     newRefLayerIndex = ray.getRefLayerIndex();
+                    // Add Extinction
                     break;
 
                 case 2: // Exit
@@ -137,7 +153,7 @@ int WinMain(int argc, char* argv[]){
                     outcouplingCount++;
                     break;
                     
-                case 3:
+                case 3: // Side Walls
                 case 4:
                     newAngle.direction = ray.getDirection();
                     newRefLayerIndex = ray.getRefLayerIndex();
@@ -148,11 +164,10 @@ int WinMain(int argc, char* argv[]){
                 }
 
                 if (extinctionCoeficients[ray.getRefLayerIndex()] != 0 && generateNewRay){ //Assume intensity always = 100%
-                    if ((float) rand()/RAND_MAX > exp(-extinctionCoeficients[ray.getRefLayerIndex()] * closestHit.distance * 1e-9)){
-                        generateNewRay = false;
+                    if ((float) rand()/RAND_MAX > exp(-extinctionCoeficients[ray.getRefLayerIndex()] * closestHit.distance * 1e-9)){ //! rand , cpp boost lib /check complier options first
+                        generateNewRay = false; // Delete Ray If Random Rolls above Intensity drop
                         lostRayCount++;
                     }
-                        
                 }
                 if (generateNewRay){
                     RAYS.push_back(Ray(closestHit.hitPoint, newAngle.direction, ray.getBounces() + 1, newRefLayerIndex));
@@ -170,10 +185,10 @@ int WinMain(int argc, char* argv[]){
 
     int end = clock();
     std::cout << double(end-start)/CLOCKS_PER_SEC;
-    std::cout << '\n' << "Rays Out >>" << outcouplingCount;
-    std::cout << '\n' << "Rays lost>>" << lostRayCount;
-    std::cout << '\n' << "% out>>" << (float) outcouplingCount/TOTALRAYS;
-    std::cout << '\n' << "ray lost to bpunce>>" << -lostRayCount - outcouplingCount + TOTALRAYS;
+    std::cout << '\n' << "          Rays Out >>" << outcouplingCount;
+    std::cout << '\n' << "         Rays lost >>" << lostRayCount;
+    std::cout << '\n' << "             % out >>" << (float) outcouplingCount/TOTALRAYS;
+    std::cout << '\n' << "rays lost (Bounce) >>" << -lostRayCount - outcouplingCount + TOTALRAYS;
 
     //Create Empty Window
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -188,7 +203,7 @@ int WinMain(int argc, char* argv[]){
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOW_WIDTH,
         SDL_WINDOW_HEIGHT,
-        SDL_WINDOW_SHOWN
+        SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
     );
     if (window == nullptr) { // Window Doesn't Open
         cerr << "Failed to create window: " << SDL_GetError() << endl;
@@ -208,32 +223,33 @@ int WinMain(int argc, char* argv[]){
     // Main event loop
     bool running = true;
     SDL_Event event;
-    // Clear screen
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
 
-        // Draw Rays
-        for (const Ray& ray : RAYS) {
-            SDL_SetRenderDrawColor(renderer, 255, 0, getRandomInt(),255);
-            ray.draw(renderer, 75);
-        }
-
-        //Draw Layers
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        for (const Layer& layer : OLEDLayers){
-            layer.draw(renderer);
-        }
-        SDL_SetRenderDrawColor(renderer, 20, 60, 255, 255);
-        for (const Layer& layer : BarrierLayers){
-            layer.draw(renderer);
-        }
-        
-        SDL_RenderPresent(renderer);
     while (running) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 running = false;
             }
+                // Clear screen
+                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+                SDL_RenderClear(renderer);
+
+                // Draw Rays
+                for (const Ray& ray : RAYS) { // Add distance 
+                    SDL_SetRenderDrawColor(renderer, 255, 0, getRandomInt(),255);
+                    ray.draw(renderer, 75);
+                }
+
+                //Draw Layers
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+                for (const Layer& layer : OLEDLayers){
+                    layer.draw(renderer);
+                }
+                SDL_SetRenderDrawColor(renderer, 20, 60, 255, 255);
+                for (const Layer& layer : BarrierLayers){
+                    layer.draw(renderer);
+                }
+                
+                SDL_RenderPresent(renderer);
         }
         
     }
