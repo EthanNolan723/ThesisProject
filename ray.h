@@ -8,23 +8,39 @@
 
 using namespace std;
 
+struct Colour{
+    Uint8 r;
+    Uint8 g;
+    Uint8 b;
+    Uint8 a;
+};
+
 class Ray {
 private:
     Vector2 position;
     Vector2 direction;
     int bounces;
     int refractiveLayerIndex;
+    double length;
+    Colour rayColour;
 public:
     // Constructors
     Ray() : position(0.0, 0.0), direction(0.0, 0.0), bounces(0) {}
     Ray(const Vector2& origin, const Vector2& direction, const int bounces, const int refractiveLayerIndex) :
-    position(origin), direction(direction.normalized()), bounces(bounces), refractiveLayerIndex(refractiveLayerIndex){}
+    position(origin), direction(direction.normalized()), bounces(bounces), refractiveLayerIndex(refractiveLayerIndex), rayColour(Colour{255,0,0,255}){}
+    Ray(const Vector2& origin, const Vector2& direction, const int bounces, const int refractiveLayerIndex, const Colour rayColour) :
+    position(origin), direction(direction.normalized()), bounces(bounces), refractiveLayerIndex(refractiveLayerIndex), rayColour(rayColour){}
 
     // Accessors
     Vector2 getPos() const { return position; }
     Vector2 getDirection() const { return direction; }
     int getBounces() const { return bounces; }
     int getRefLayerIndex() const { return refractiveLayerIndex; }
+    double getLength() const { return length; }
+    Colour getRayColour() const { return rayColour; }
+
+    void setLength(const double length) { this->length = length; }
+    void setRayColour(const Colour rayColour) { this->rayColour = rayColour; }
 
     // Method to get a point along the ray at parameter t
     Vector2 step(double t) const {

@@ -16,7 +16,7 @@
 using namespace std;
 
 #define SDL_WINDOW_WIDTH 1000
-#define SDL_WINDOW_HEIGHT 1500
+#define SDL_WINDOW_HEIGHT 1000
 #define TOTALRAYS 600
 #define OLEDWIDTH 800
 
@@ -53,7 +53,7 @@ int WinMain(int argc, char* argv[]){
     RAYS.insert(RAYS.end(), testRays.begin(), testRays.end());
 
     for (int i = 0; i < TOTALRAYS; i++){ //! Generating Random Rays
-        RAYS.push_back(Ray(Vector2(500, 185), RndDir(), 0, 0)); // distribution uniform vs normal - time dependent density theory - dft
+        RAYS.push_back(Ray(Vector2(500, 185), RndDir(), 0, 1)); // distribution uniform vs normal - time dependent density theory - dft
         // transition dipole moment 
 
         //anisotropic light emmission oled material dft - perameter to adjust isotopic value, 1 (perfectly straight up), 0 perfectly isotropic
@@ -84,8 +84,8 @@ int WinMain(int argc, char* argv[]){
     BarrierLayers.push_back(Layer( { Vector2(900, 100), Vector2(900, 1440)}, RightWall)); // sides
     BarrierLayers.push_back(Layer( { Vector2(100, 100), Vector2(100, 1440)}, LeftWall)); // sides
     OLEDLayers.push_back(Layer( { Vector2(40, 1440), Vector2(50, 1490), Vector2(950, 1490), Vector2(960, 1440)}, Outcoupled)); // Outcoupled
-    vector<float> refractiveIndexes = {1.78, 1.951, 1.5, 1};
-    vector<float> extinctionCoeficients = {0, 1.034e6, 0, 0}; // ! Actually Alpha value
+    vector<float> refractiveIndexes = {0.85, 1.78, 1.951, 1.5, 1};
+    vector<float> extinctionCoeficients = {0, 0, 1.034e6, 0, 0}; // ! Actually Alpha value - not n2
 
     // //! Testing Corner Itersection
     // BarrierLayers.push_back(Layer( { Vector2(100,100), Vector2(100,400)}, Transport));
@@ -127,6 +127,7 @@ int WinMain(int argc, char* argv[]){
                 RefractedRay newAngle;
                 bool generateNewRay = true;
                 int newRefLayerIndex = ray.getRefLayerIndex();
+                ray.setLength(closestHit.distance);
                 switch (closestHit.type){
                 case 0: // Refractive Layer
                     newAngle = refractedAngle(refractiveIndexes[ray.getRefLayerIndex()],
@@ -142,15 +143,21 @@ int WinMain(int argc, char* argv[]){
                     break;
 
                 case 1: // Reflective
-                    newAngle.direction = Reflection(ray, closestHit.normal);
-                    newRefLayerIndex = ray.getRefLayerIndex();
-                    // Add Extinction
+                    if ((float) rand()/RAND_MAX < 0.30){
+                        newAngle.direction = Reflection(ray, closestHit.normal);
+                        newRefLayerIndex = ray.getRefLayerIndex();
+                    }
+                    else{
+                        generateNewRay = false;
+                        ray.setRayColour(Colour{0,0,255,255});
+                    }
                     break;
 
                 case 2: // Exit
                     // add to outcoupling counter
                     generateNewRay = false;
                     outcouplingCount++;
+                    ray.setRayColour(Colour{0,255,0,255});
                     break;
                     
                 case 3: // Side Walls
@@ -168,7 +175,10 @@ int WinMain(int argc, char* argv[]){
                         generateNewRay = false; // Delete Ray If Random Rolls above Intensity drop
                         lostRayCount++;
                     }
+                    else
+                        ray.setRayColour(Colour{0,0,255,255});
                 }
+                
                 if (generateNewRay){
                     RAYS.push_back(Ray(closestHit.hitPoint, newAngle.direction, ray.getBounces() + 1, newRefLayerIndex));
                 }
@@ -180,6 +190,8 @@ int WinMain(int argc, char* argv[]){
             Refraction -> reflect or refract
             */
         }
+        else
+            ray.setRayColour(Colour{0,0,255,255});
         ++i;
     }
 
@@ -235,8 +247,8 @@ int WinMain(int argc, char* argv[]){
 
                 // Draw Rays
                 for (const Ray& ray : RAYS) { // Add distance 
-                    SDL_SetRenderDrawColor(renderer, 255, 0, getRandomInt(),255);
-                    ray.draw(renderer, 75);
+                    SDL_SetRenderDrawColor(renderer, ray.getRayColour().r, ray.getRayColour().g, ray.getRayColour().b, ray.getRayColour().a);
+                    ray.draw(renderer, (int) ray.getLength());
                 }
 
                 //Draw Layers
