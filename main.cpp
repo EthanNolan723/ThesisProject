@@ -17,20 +17,30 @@ using namespace std;
 
 #define SDL_WINDOW_WIDTH 1000
 #define SDL_WINDOW_HEIGHT 1000
-#define TOTALRAYS 600
+
+#define TOTALRAYS 1000
+#define TOTALBOUNCES 1
 #define OLEDWIDTH 800
 
-Vector2 RndDir(){ // Temp
-    double randAngle = 2*PI * rand() / (RAND_MAX + 1);
-    return Vector2(sin(randAngle), cos(randAngle));
+random_device rd;
+mt19937 gen(rd());
+uniform_real_distribution<> dist(0.0, 1.0);
+uniform_real_distribution<> angle_dist(0.0, 2 * PI);
+
+Vector2 RndDir() { 
+    double randAngle = angle_dist(gen);
+    return Vector2(cos(randAngle), sin(randAngle));
 }
 
-int getRandomInt() {
-    random_device rd; // Seed for the random number engine
-    mt19937 gen(rd()); // Mersenne Twister engine
-    uniform_int_distribution<> distr(0, 255); // Define range 0-255
+Vector2 RndDirNormal(double spreadAngle = 50.0) {
+    normal_distribution<double> angle_dist_up(90.0, spreadAngle);
+    normal_distribution<double> angle_dist_down(-90.0, spreadAngle);
 
-    return distr(gen);
+    // Randomly choose between the two distributions
+    uniform_int_distribution<int> chooser(0, 1);
+    double randAngle = chooser(gen) == 0 ? angle_dist_up(gen) : angle_dist_down(gen);
+
+    return Vector2(cos(randAngle * PI / 180.0), sin(randAngle * PI / 180.0));
 }
 
 bool areDoublesEqual(double a, double b, double epsilon = 1e-8) { // Temp
@@ -53,7 +63,7 @@ int WinMain(int argc, char* argv[]){
     RAYS.insert(RAYS.end(), testRays.begin(), testRays.end());
 
     for (int i = 0; i < TOTALRAYS; i++){ //! Generating Random Rays
-        RAYS.push_back(Ray(Vector2(500, 185), RndDir(), 0, 1)); // distribution uniform vs normal - time dependent density theory - dft
+        RAYS.push_back(Ray(Vector2(500, 185), RndDirNormal(), 0, 1)); // distribution uniform vs normal - time dependent density theory - dft
         // transition dipole moment 
 
         //anisotropic light emmission oled material dft - perameter to adjust isotopic value, 1 (perfectly straight up), 0 perfectly isotropic
@@ -104,7 +114,7 @@ int WinMain(int argc, char* argv[]){
     size_t i = 0;
     while (i < RAYS.size()){
         Ray& ray = RAYS[i];
-        if (ray.getBounces() < 300){
+        if (ray.getBounces() < TOTALBOUNCES){
             HitInfo closestHit;
             closestHit.didHit = false;
             for (const Layer& layer : OLEDLayers){ // Go through Layers Of Device
