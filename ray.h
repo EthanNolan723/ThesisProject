@@ -27,9 +27,9 @@ public:
     // Constructors
     Ray() : position(0.0, 0.0), direction(0.0, 0.0), bounces(0) {}
     Ray(const Vector2& origin, const Vector2& direction, const int bounces, const int refractiveLayerIndex) :
-    position(origin), direction(direction.normalized()), bounces(bounces), refractiveLayerIndex(refractiveLayerIndex), rayColour(Colour{255,0,0,255}){}
+    position(origin), direction(direction.normalized()), bounces(bounces), refractiveLayerIndex(refractiveLayerIndex), length(50), rayColour(Colour{255,0,0,255}){}
     Ray(const Vector2& origin, const Vector2& direction, const int bounces, const int refractiveLayerIndex, const Colour rayColour) :
-    position(origin), direction(direction.normalized()), bounces(bounces), refractiveLayerIndex(refractiveLayerIndex), rayColour(rayColour){}
+    position(origin), direction(direction.normalized()), bounces(bounces), refractiveLayerIndex(refractiveLayerIndex), length(50), rayColour(rayColour){}
 
     // Accessors
     Vector2 getPos() const { return position; }
