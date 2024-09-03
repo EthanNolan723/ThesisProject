@@ -13,6 +13,8 @@
 
 #include <SDL2/SDL.h>
 
+// https://pubs.acs.org/doi/full/10.1021/acs.nanolett.7b03528
+
 using namespace std;
 
 #define SDL_WINDOW_WIDTH 1000
