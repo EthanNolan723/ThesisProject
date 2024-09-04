@@ -18,19 +18,20 @@
 
 using namespace std;
 
-#define SDL_WINDOW_WIDTH 1000
+#define SDL_WINDOW_WIDTH 1200
 #define SDL_WINDOW_HEIGHT 800
 
 #define TOTALRAYS 10000
 #define TOTALBOUNCES 300
 #define TOTALRUNS 1000
-#define OLEDWIDTH 800
+#define OLEDWIDTH 1000
 #define WAVELENGTH 510 * 1e-9
 
 random_device rd;
 mt19937 gen(rd());
 uniform_real_distribution<> rnd(0.0, 1.0);
 uniform_real_distribution<> rndAngle(0.0, 2 * PI);
+uniform_int_distribution<int> startLocRange(500, 700);
 
 Vector2 RndDir() { // Completly Isotropic
     double randAngle = rndAngle(gen);
@@ -46,6 +47,18 @@ Vector2 RndDirNormal(double spreadAngle = 10.0) { // Normal Distribution
     return Vector2(cos(randAngle * PI / 180.0), sin(randAngle * PI / 180.0));
 }
 
+Vector2 RndDirDipole() {
+    double randAngle;
+
+    double x = rnd(gen);
+    double y = asin(x); //!
+    uniform_int_distribution<int> chooser(0, 1);
+    if (chooser(gen)) randAngle = chooser(gen) == 0 ? y + PI/2 : y - PI/2;
+    else randAngle = chooser(gen) == 0 ? -y + PI/2 : -y - PI/2;
+
+    return Vector2(cos(randAngle), sin(randAngle));
+}
+
 bool areDoublesEqual(double a, double b, double err = 1e-8) { // Temp
     return fabs(a - b) < err;
 }
@@ -57,7 +70,9 @@ int WinMain(int argc, char* argv[]){
     vector<Ray> RAYS;
     initializeLayers();
 
-    for (int run = 0; run <= TOTALRUNS; run++){    
+    // 
+
+    for (int run = 1; run <= TOTALRUNS; run++){    
         int outcouplingCount = 0;
         int lostRayCount = 0;
         RAYS.clear(); // REMOVE ALL RAYS FROM PREVIOUS RUNS
@@ -71,7 +86,7 @@ int WinMain(int argc, char* argv[]){
         // RAYS.insert(RAYS.end(), testRays.begin(), testRays.end());
 
         for (int i = 0; i < TOTALRAYS; i++){ //! Generating Random Rays
-            RAYS.push_back(Ray(Vector2(500, 185), RndDir(), 0, 2)); // distribution uniform vs normal - time dependent density theory - dft
+            RAYS.push_back(Ray(Vector2(startLocRange(gen), 185), RndDir(), 0, 2)); // distribution uniform vs normal - time dependent density theory - dft
             // ?transition dipole moment 
             // ?anisotropic light emmission oled material dft - perameter to adjust isotopic value, 1 (perfectly straight up), 0 perfectly isotropic
         }
@@ -162,7 +177,7 @@ int WinMain(int argc, char* argv[]){
                         }                        
                     }
                     
-                    if (generateNewRay){
+                    if (generateNewRay){ //Add New Ray To End
                         RAYS.push_back(Ray(closestHit.hitPoint, newAngle.direction, ray.getBounces() + 1, newRefLayerIndex));
                     }
                 }
@@ -205,6 +220,7 @@ int WinMain(int argc, char* argv[]){
         SDL_WINDOW_HEIGHT,
         SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
     );
+
     if (window == nullptr) { // Window Doesn't Open
         cerr << "Failed to create window: " << SDL_GetError() << endl;
         SDL_Quit();
@@ -264,12 +280,3 @@ int WinMain(int argc, char* argv[]){
     std::cin >> test;
     return 0;
 }
-
-// ** RANDOM RAYS
-// vector<Ray> RAYS; 
-    // for (int i = 0; i < 256; i++){ // Generating Random Rays
-    //     RAYS.push_back(Ray(Vector2(500, 500), RndDir()));
-    // }
-    // cout << refractedAngle(1.5, 1, 40*PI/180);
-
-    // srand (time(NULL));
