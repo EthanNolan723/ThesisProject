@@ -23,7 +23,7 @@ using namespace std;
 
 #define TOTALRAYS 10000
 #define TOTALBOUNCES 300
-#define TOTALRUNS 1000
+#define TOTALRUNS 1200
 #define OLEDWIDTH 1000
 #define WAVELENGTH 510 * 1e-9
 
@@ -31,7 +31,7 @@ random_device rd;
 mt19937 gen(rd());
 uniform_real_distribution<> rnd(0.0, 1.0);
 uniform_real_distribution<> rndAngle(0.0, 2 * PI);
-uniform_int_distribution<int> startLocRange(500, 700);
+uniform_int_distribution<int> startLocRange(200, 1000);
 
 Vector2 RndDir() { // Completly Isotropic
     double randAngle = rndAngle(gen);
@@ -52,6 +52,11 @@ Vector2 RndDirDipole() {
 
     double x = rnd(gen);
     double y = asin(x); //!
+
+    // ((157182 sqrt(36979256864265670656*y^2 – 10950043462983019200*y - 33694197072743254875) – 955832735325312*y + 141517311091075)^(1/3) 
+    // + 9481893805/(157182 sqrt(36979256864265670656*y^2 – 10950043462983019200*y - 33694197072743254875) – 955832735325312*y + 141517311091075)^(1/3) 
+    // + 9985)-0.7
+    // /78591
     uniform_int_distribution<int> chooser(0, 1);
     if (chooser(gen)) randAngle = chooser(gen) == 0 ? y + PI/2 : y - PI/2;
     else randAngle = chooser(gen) == 0 ? -y + PI/2 : -y - PI/2;
