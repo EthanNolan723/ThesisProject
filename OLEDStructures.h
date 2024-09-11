@@ -12,6 +12,6 @@ extern vector<Layer> BarrierLayers;
 extern vector<float> refractiveIndexes;
 extern vector<float> extinctionCoeficients;
 
-void initializeLayers(); // Function to initialize the layers
+void initializeLayers(int layerPP); // Function to initialize the layers
 
 #endif // OLEDSTRUCTURES_H
