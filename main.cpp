@@ -21,11 +21,14 @@ using namespace std;
 #define SDL_WINDOW_WIDTH 1200
 #define SDL_WINDOW_HEIGHT 800
 
-#define TOTALRAYS 10000
-#define TOTALBOUNCES 300
-#define TOTALRUNS 1200
+#define TOTALRAYS 2000
+#define TOTALBOUNCES 0
+#define TOTALRUNS 1
 #define OLEDWIDTH 1000
+#define NEWTONITERATIONS 10
 #define WAVELENGTH 510 * 1e-9
+
+// 10k, 300, 2k, 10
 
 random_device rd;
 mt19937 gen(rd());
@@ -47,19 +50,27 @@ Vector2 RndDirNormal(double spreadAngle = 10.0) { // Normal Distribution
     return Vector2(cos(randAngle * PI / 180.0), sin(randAngle * PI / 180.0));
 }
 
+float f(float x, float y){
+    return ((-(0.7859/3)*pow(x, 3) + (0.1997/2)*pow(x,2) + 1.1938*x)/1.031683 - y);
+}
+
+float df(float x){
+    return (-0.7859*pow(x,2) + 0.1997*x + 1.1938)/1.031683;
+}
+
 Vector2 RndDirDipole() {
-    double randAngle;
+    float randAngle;
+    float y = rnd(gen);
+    float x = 0.5; // start in center
+    for (int i = 0; i < NEWTONITERATIONS; i++){
+        x = x - f(x, y) / df(x);
+    }
 
-    double x = rnd(gen);
-    double y = asin(x); //!
-
-    // ((157182 sqrt(36979256864265670656*y^2 – 10950043462983019200*y - 33694197072743254875) – 955832735325312*y + 141517311091075)^(1/3) 
-    // + 9481893805/(157182 sqrt(36979256864265670656*y^2 – 10950043462983019200*y - 33694197072743254875) – 955832735325312*y + 141517311091075)^(1/3) 
-    // + 9985)-0.7
-    // /78591
+    x = clamp(x, 0.0f, 1.0f);
+    x = asin(y);
     uniform_int_distribution<int> chooser(0, 1);
-    if (chooser(gen)) randAngle = chooser(gen) == 0 ? y + PI/2 : y - PI/2;
-    else randAngle = chooser(gen) == 0 ? -y + PI/2 : -y - PI/2;
+    if (chooser(gen)) randAngle = chooser(gen) == 0 ? x + PI/2 : x - PI/2;
+    else randAngle = chooser(gen) == 0 ? -x + PI/2 : -x - PI/2;
 
     return Vector2(cos(randAngle), sin(randAngle));
 }
@@ -91,7 +102,7 @@ int WinMain(int argc, char* argv[]){
         // RAYS.insert(RAYS.end(), testRays.begin(), testRays.end());
 
         for (int i = 0; i < TOTALRAYS; i++){ //! Generating Random Rays
-            RAYS.push_back(Ray(Vector2(startLocRange(gen), 185), RndDir(), 0, 2)); // distribution uniform vs normal - time dependent density theory - dft
+            RAYS.push_back(Ray(Vector2(600, 185), RndDirDipole(), 0, 2)); // distribution uniform vs normal - time dependent density theory - dft
             // ?transition dipole moment 
             // ?anisotropic light emmission oled material dft - perameter to adjust isotopic value, 1 (perfectly straight up), 0 perfectly isotropic
         }
@@ -257,7 +268,8 @@ int WinMain(int argc, char* argv[]){
                 // Draw Rays
                 for (const Ray& ray : RAYS) { // Add distance 
                     SDL_SetRenderDrawColor(renderer, ray.getRayColour().r, ray.getRayColour().g, ray.getRayColour().b, ray.getRayColour().a);
-                    ray.draw(renderer, (int) ray.getLength());
+                    //ray.draw(renderer, (int) ray.getLength());
+                    ray.draw(renderer, (int) 180);
                 }
 
                 //Draw Layers

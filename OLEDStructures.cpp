@@ -164,7 +164,7 @@ void initializeLayers() {
     Vector2(1100.00, 290.00)
     }, Refractive)); // Organic - ITO */
 
-    /* //! Sin wave Organic / ITO, 5 reps P-P 40:
+    //* //! Sin wave Organic / ITO, 5 reps P-P 40:
     OLEDLayers.push_back(Layer( {
     Vector2(100.00, 290.00), Vector2(105.00, 293.13), Vector2(110.00, 296.18), Vector2(115.00, 299.08), Vector2(120.00, 301.76), Vector2(125.00, 304.14), Vector2(130.00, 306.18), Vector2(135.00, 307.82), Vector2(140.00, 309.02), Vector2(145.00, 309.75), 
     Vector2(150.00, 310.00), Vector2(155.00, 309.75), Vector2(160.00, 309.02), Vector2(165.00, 307.82), Vector2(170.00, 306.18), Vector2(175.00, 304.14), Vector2(180.00, 301.76), Vector2(185.00, 299.08), Vector2(190.00, 296.18), Vector2(195.00, 293.13), 
@@ -1499,39 +1499,6 @@ void initializeLayers() {
     Vector2(992.86, 327.50), Vector2(996.43, 327.04), Vector2(1000.00, 325.66), Vector2(1003.57, 323.41), Vector2(1007.14, 320.34), Vector2(1010.71, 316.52), Vector2(1014.29, 312.04), Vector2(1017.86, 307.02), Vector2(1021.43, 301.59), Vector2(1025.00, 295.87), 
     Vector2(1028.57, 290.00), Vector2(1032.14, 284.13), Vector2(1035.71, 278.41), Vector2(1039.29, 272.98), Vector2(1042.86, 267.96), Vector2(1046.43, 263.48), Vector2(1050.00, 259.66), Vector2(1053.57, 256.59), Vector2(1057.14, 254.34), Vector2(1060.71, 252.96), 
     Vector2(1064.29, 252.50), Vector2(1067.86, 252.96), Vector2(1071.43, 254.34), Vector2(1075.00, 256.59), Vector2(1078.57, 259.66), Vector2(1082.14, 263.48), Vector2(1085.71, 267.96), Vector2(1089.29, 272.98), Vector2(1092.86, 278.41), Vector2(1096.43, 284.13), 
-    Vector2(1100.00, 290.00)
-    }, Refractive)); // Organic - ITO */
-
-/* //! Sin wave Organic / ITO, 7 reps P-P 80
-    OLEDLayers.push_back(Layer( {
-    Vector2(100.00, 290.00), Vector2(103.57, 296.26), Vector2(107.14, 302.36), Vector2(110.71, 308.16), Vector2(114.29, 313.51), Vector2(117.86, 318.28), Vector2(121.43, 322.36), Vector2(125.00, 325.64), Vector2(128.57, 328.04), Vector2(132.14, 329.51), 
-    Vector2(135.71, 330.00), Vector2(139.29, 329.51), Vector2(142.86, 328.04), Vector2(146.43, 325.64), Vector2(150.00, 322.36), Vector2(153.57, 318.28), Vector2(157.14, 313.51), Vector2(160.71, 308.16), Vector2(164.29, 302.36), Vector2(167.86, 296.26), 
-    Vector2(171.43, 290.00), Vector2(175.00, 283.74), Vector2(178.57, 277.64), Vector2(182.14, 271.84), Vector2(185.71, 266.49), Vector2(189.29, 261.72), Vector2(192.86, 257.64), Vector2(196.43, 254.36), Vector2(200.00, 251.96), Vector2(203.57, 250.49), 
-    Vector2(207.14, 250.00), Vector2(210.71, 250.49), Vector2(214.29, 251.96), Vector2(217.86, 254.36), Vector2(221.43, 257.64), Vector2(225.00, 261.72), Vector2(228.57, 266.49), Vector2(232.14, 271.84), Vector2(235.71, 277.64), Vector2(239.29, 283.74), 
-    Vector2(242.86, 290.00), Vector2(246.43, 296.26), Vector2(250.00, 302.36), Vector2(253.57, 308.16), Vector2(257.14, 313.51), Vector2(260.71, 318.28), Vector2(264.29, 322.36), Vector2(267.86, 325.64), Vector2(271.43, 328.04), Vector2(275.00, 329.51), 
-    Vector2(278.57, 330.00), Vector2(282.14, 329.51), Vector2(285.71, 328.04), Vector2(289.29, 325.64), Vector2(292.86, 322.36), Vector2(296.43, 318.28), Vector2(300.00, 313.51), Vector2(303.57, 308.16), Vector2(307.14, 302.36), Vector2(310.71, 296.26), 
-    Vector2(314.29, 290.00), Vector2(317.86, 283.74), Vector2(321.43, 277.64), Vector2(325.00, 271.84), Vector2(328.57, 266.49), Vector2(332.14, 261.72), Vector2(335.71, 257.64), Vector2(339.29, 254.36), Vector2(342.86, 251.96), Vector2(346.43, 250.49), 
-    Vector2(350.00, 250.00), Vector2(353.57, 250.49), Vector2(357.14, 251.96), Vector2(360.71, 254.36), Vector2(364.29, 257.64), Vector2(367.86, 261.72), Vector2(371.43, 266.49), Vector2(375.00, 271.84), Vector2(378.57, 277.64), Vector2(382.14, 283.74), 
-    Vector2(385.71, 290.00), Vector2(389.29, 296.26), Vector2(392.86, 302.36), Vector2(396.43, 308.16), Vector2(400.00, 313.51), Vector2(403.57, 318.28), Vector2(407.14, 322.36), Vector2(410.71, 325.64), Vector2(414.29, 328.04), Vector2(417.86, 329.51), 
-    Vector2(421.43, 330.00), Vector2(425.00, 329.51), Vector2(428.57, 328.04), Vector2(432.14, 325.64), Vector2(435.71, 322.36), Vector2(439.29, 318.28), Vector2(442.86, 313.51), Vector2(446.43, 308.16), Vector2(450.00, 302.36), Vector2(453.57, 296.26), 
-    Vector2(457.14, 290.00), Vector2(460.71, 283.74), Vector2(464.29, 277.64), Vector2(467.86, 271.84), Vector2(471.43, 266.49), Vector2(475.00, 261.72), Vector2(478.57, 257.64), Vector2(482.14, 254.36), Vector2(485.71, 251.96), Vector2(489.29, 250.49), 
-    Vector2(492.86, 250.00), Vector2(496.43, 250.49), Vector2(500.00, 251.96), Vector2(503.57, 254.36), Vector2(507.14, 257.64), Vector2(510.71, 261.72), Vector2(514.29, 266.49), Vector2(517.86, 271.84), Vector2(521.43, 277.64), Vector2(525.00, 283.74), 
-    Vector2(528.57, 290.00), Vector2(532.14, 296.26), Vector2(535.71, 302.36), Vector2(539.29, 308.16), Vector2(542.86, 313.51), Vector2(546.43, 318.28), Vector2(550.00, 322.36), Vector2(553.57, 325.64), Vector2(557.14, 328.04), Vector2(560.71, 329.51), 
-    Vector2(564.29, 330.00), Vector2(567.86, 329.51), Vector2(571.43, 328.04), Vector2(575.00, 325.64), Vector2(578.57, 322.36), Vector2(582.14, 318.28), Vector2(585.71, 313.51), Vector2(589.29, 308.16), Vector2(592.86, 302.36), Vector2(596.43, 296.26), 
-    Vector2(600.00, 290.00), Vector2(603.57, 283.74), Vector2(607.14, 277.64), Vector2(610.71, 271.84), Vector2(614.29, 266.49), Vector2(617.86, 261.72), Vector2(621.43, 257.64), Vector2(625.00, 254.36), Vector2(628.57, 251.96), Vector2(632.14, 250.49), 
-    Vector2(635.71, 250.00), Vector2(639.29, 250.49), Vector2(642.86, 251.96), Vector2(646.43, 254.36), Vector2(650.00, 257.64), Vector2(653.57, 261.72), Vector2(657.14, 266.49), Vector2(660.71, 271.84), Vector2(664.29, 277.64), Vector2(667.86, 283.74), 
-    Vector2(671.43, 290.00), Vector2(675.00, 296.26), Vector2(678.57, 302.36), Vector2(682.14, 308.16), Vector2(685.71, 313.51), Vector2(689.29, 318.28), Vector2(692.86, 322.36), Vector2(696.43, 325.64), Vector2(700.00, 328.04), Vector2(703.57, 329.51), 
-    Vector2(707.14, 330.00), Vector2(710.71, 329.51), Vector2(714.29, 328.04), Vector2(717.86, 325.64), Vector2(721.43, 322.36), Vector2(725.00, 318.28), Vector2(728.57, 313.51), Vector2(732.14, 308.16), Vector2(735.71, 302.36), Vector2(739.29, 296.26), 
-    Vector2(742.86, 290.00), Vector2(746.43, 283.74), Vector2(750.00, 277.64), Vector2(753.57, 271.84), Vector2(757.14, 266.49), Vector2(760.71, 261.72), Vector2(764.29, 257.64), Vector2(767.86, 254.36), Vector2(771.43, 251.96), Vector2(775.00, 250.49), 
-    Vector2(778.57, 250.00), Vector2(782.14, 250.49), Vector2(785.71, 251.96), Vector2(789.29, 254.36), Vector2(792.86, 257.64), Vector2(796.43, 261.72), Vector2(800.00, 266.49), Vector2(803.57, 271.84), Vector2(807.14, 277.64), Vector2(810.71, 283.74), 
-    Vector2(814.29, 290.00), Vector2(817.86, 296.26), Vector2(821.43, 302.36), Vector2(825.00, 308.16), Vector2(828.57, 313.51), Vector2(832.14, 318.28), Vector2(835.71, 322.36), Vector2(839.29, 325.64), Vector2(842.86, 328.04), Vector2(846.43, 329.51), 
-    Vector2(850.00, 330.00), Vector2(853.57, 329.51), Vector2(857.14, 328.04), Vector2(860.71, 325.64), Vector2(864.29, 322.36), Vector2(867.86, 318.28), Vector2(871.43, 313.51), Vector2(875.00, 308.16), Vector2(878.57, 302.36), Vector2(882.14, 296.26), 
-    Vector2(885.71, 290.00), Vector2(889.29, 283.74), Vector2(892.86, 277.64), Vector2(896.43, 271.84), Vector2(900.00, 266.49), Vector2(903.57, 261.72), Vector2(907.14, 257.64), Vector2(910.71, 254.36), Vector2(914.29, 251.96), Vector2(917.86, 250.49), 
-    Vector2(921.43, 250.00), Vector2(925.00, 250.49), Vector2(928.57, 251.96), Vector2(932.14, 254.36), Vector2(935.71, 257.64), Vector2(939.29, 261.72), Vector2(942.86, 266.49), Vector2(946.43, 271.84), Vector2(950.00, 277.64), Vector2(953.57, 283.74), 
-    Vector2(957.14, 290.00), Vector2(960.71, 296.26), Vector2(964.29, 302.36), Vector2(967.86, 308.16), Vector2(971.43, 313.51), Vector2(975.00, 318.28), Vector2(978.57, 322.36), Vector2(982.14, 325.64), Vector2(985.71, 328.04), Vector2(989.29, 329.51), 
-    Vector2(992.86, 330.00), Vector2(996.43, 329.51), Vector2(1000.00, 328.04), Vector2(1003.57, 325.64), Vector2(1007.14, 322.36), Vector2(1010.71, 318.28), Vector2(1014.29, 313.51), Vector2(1017.86, 308.16), Vector2(1021.43, 302.36), Vector2(1025.00, 296.26), 
-    Vector2(1028.57, 290.00), Vector2(1032.14, 283.74), Vector2(1035.71, 277.64), Vector2(1039.29, 271.84), Vector2(1042.86, 266.49), Vector2(1046.43, 261.72), Vector2(1050.00, 257.64), Vector2(1053.57, 254.36), Vector2(1057.14, 251.96), Vector2(1060.71, 250.49), 
-    Vector2(1064.29, 250.00), Vector2(1067.86, 250.49), Vector2(1071.43, 251.96), Vector2(1075.00, 254.36), Vector2(1078.57, 257.64), Vector2(1082.14, 261.72), Vector2(1085.71, 266.49), Vector2(1089.29, 271.84), Vector2(1092.86, 277.64), Vector2(1096.43, 283.74), 
     Vector2(1100.00, 290.00)
     }, Refractive)); // Organic - ITO */
 
@@ -4037,7 +4004,7 @@ void initializeLayers() {
     Vector2(1100.00, 290.00)
     }, Refractive)); // Organic - ITO */
 
-    //* //! Sin wave Organic / ITO, 11 reps P-P 10
+    /* //! Sin wave Organic / ITO, 11 reps P-P 10
     OLEDLayers.push_back(Layer( {
     Vector2(100.00, 290.00), Vector2(102.27, 290.78), Vector2(104.55, 291.55), Vector2(106.82, 292.27), Vector2(109.09, 292.94), Vector2(111.36, 293.54), Vector2(113.64, 294.05), Vector2(115.91, 294.46), Vector2(118.18, 294.76), Vector2(120.45, 294.94), 
     Vector2(122.73, 295.00), Vector2(125.00, 294.94), Vector2(127.27, 294.76), Vector2(129.55, 294.46), Vector2(131.82, 294.05), Vector2(134.09, 293.54), Vector2(136.36, 292.94), Vector2(138.64, 292.27), Vector2(140.91, 291.55), Vector2(143.18, 290.78), 
@@ -4135,7 +4102,7 @@ void initializeLayers() {
     Vector2(1100.00, 290.00)
     }, Refractive)); // Organic - ITO */
 
-/* //! Sin wave Organic / ITO, 11 reps P-P 20
+    /* //! Sin wave Organic / ITO, 11 reps P-P 20
     OLEDLayers.push_back(Layer( {
     Vector2(100.00, 290.00), Vector2(102.27, 291.56), Vector2(104.55, 293.09), Vector2(106.82, 294.54), Vector2(109.09, 295.88), Vector2(111.36, 297.07), Vector2(113.64, 298.09), Vector2(115.91, 298.91), Vector2(118.18, 299.51), Vector2(120.45, 299.88), 
     Vector2(122.73, 300.00), Vector2(125.00, 299.88), Vector2(127.27, 299.51), Vector2(129.55, 298.91), Vector2(131.82, 298.09), Vector2(134.09, 297.07), Vector2(136.36, 295.88), Vector2(138.64, 294.54), Vector2(140.91, 293.09), Vector2(143.18, 291.56), 
@@ -4233,7 +4200,7 @@ void initializeLayers() {
     Vector2(1100.00, 290.00)
     }, Refractive)); // Organic - ITO */
 
-/* //! Sin wave Organic / ITO, 11 reps P-P 30
+    /* //! Sin wave Organic / ITO, 11 reps P-P 30
     OLEDLayers.push_back(Layer( {
     Vector2(100.00, 290.00), Vector2(102.27, 292.35), Vector2(104.55, 294.64), Vector2(106.82, 296.81), Vector2(109.09, 298.82), Vector2(111.36, 300.61), Vector2(113.64, 302.14), Vector2(115.91, 303.37), Vector2(118.18, 304.27), Vector2(120.45, 304.82), 
     Vector2(122.73, 305.00), Vector2(125.00, 304.82), Vector2(127.27, 304.27), Vector2(129.55, 303.37), Vector2(131.82, 302.14), Vector2(134.09, 300.61), Vector2(136.36, 298.82), Vector2(138.64, 296.81), Vector2(140.91, 294.64), Vector2(143.18, 292.35), 
@@ -4331,7 +4298,7 @@ void initializeLayers() {
     Vector2(1100.00, 290.00)
     }, Refractive)); // Organic - ITO */
 
-/* //! Sin wave Organic / ITO, 11 reps P-P 40
+    /* //! Sin wave Organic / ITO, 11 reps P-P 40
     OLEDLayers.push_back(Layer( {
     Vector2(100.00, 290.00), Vector2(102.27, 293.13), Vector2(104.55, 296.18), Vector2(106.82, 299.08), Vector2(109.09, 301.76), Vector2(111.36, 304.14), Vector2(113.64, 306.18), Vector2(115.91, 307.82), Vector2(118.18, 309.02), Vector2(120.45, 309.75), 
     Vector2(122.73, 310.00), Vector2(125.00, 309.75), Vector2(127.27, 309.02), Vector2(129.55, 307.82), Vector2(131.82, 306.18), Vector2(134.09, 304.14), Vector2(136.36, 301.76), Vector2(138.64, 299.08), Vector2(140.91, 296.18), Vector2(143.18, 293.13), 
@@ -4429,7 +4396,7 @@ void initializeLayers() {
     Vector2(1100.00, 290.00)
     }, Refractive)); // Organic - ITO */
 
-/* //! Sin wave Organic / ITO, 11 reps P-P 50
+    /* //! Sin wave Organic / ITO, 11 reps P-P 50
     OLEDLayers.push_back(Layer( {
     Vector2(100.00, 290.00), Vector2(102.27, 293.91), Vector2(104.55, 297.73), Vector2(106.82, 301.35), Vector2(109.09, 304.69), Vector2(111.36, 307.68), Vector2(113.64, 310.23), Vector2(115.91, 312.28), Vector2(118.18, 313.78), Vector2(120.45, 314.69), 
     Vector2(122.73, 315.00), Vector2(125.00, 314.69), Vector2(127.27, 313.78), Vector2(129.55, 312.28), Vector2(131.82, 310.23), Vector2(134.09, 307.68), Vector2(136.36, 304.69), Vector2(138.64, 301.35), Vector2(140.91, 297.73), Vector2(143.18, 293.91), 
@@ -4527,7 +4494,7 @@ void initializeLayers() {
     Vector2(1100.00, 290.00)
     }, Refractive)); // Organic - ITO */
 
-/* //! Sin wave Organic / ITO, 11 reps P-P 60
+    /* //! Sin wave Organic / ITO, 11 reps P-P 60
     OLEDLayers.push_back(Layer( {
     Vector2(100.00, 290.00), Vector2(102.27, 294.69), Vector2(104.55, 299.27), Vector2(106.82, 303.62), Vector2(109.09, 307.63), Vector2(111.36, 311.21), Vector2(113.64, 314.27), Vector2(115.91, 316.73), Vector2(118.18, 318.53), Vector2(120.45, 319.63), 
     Vector2(122.73, 320.00), Vector2(125.00, 319.63), Vector2(127.27, 318.53), Vector2(129.55, 316.73), Vector2(131.82, 314.27), Vector2(134.09, 311.21), Vector2(136.36, 307.63), Vector2(138.64, 303.62), Vector2(140.91, 299.27), Vector2(143.18, 294.69), 
@@ -4625,7 +4592,7 @@ void initializeLayers() {
     Vector2(1100.00, 290.00)
     }, Refractive)); // Organic - ITO */
 
-/* //! Sin wave Organic / ITO, 11 reps P-P 70
+    /* //! Sin wave Organic / ITO, 11 reps P-P 70
     OLEDLayers.push_back(Layer( {
     Vector2(100.00, 290.00), Vector2(102.27, 295.48), Vector2(104.55, 300.82), Vector2(106.82, 305.89), Vector2(109.09, 310.57), Vector2(111.36, 314.75), Vector2(113.64, 318.32), Vector2(115.91, 321.19), Vector2(118.18, 323.29), Vector2(120.45, 324.57), 
     Vector2(122.73, 325.00), Vector2(125.00, 324.57), Vector2(127.27, 323.29), Vector2(129.55, 321.19), Vector2(131.82, 318.32), Vector2(134.09, 314.75), Vector2(136.36, 310.57), Vector2(138.64, 305.89), Vector2(140.91, 300.82), Vector2(143.18, 295.48), 
@@ -4723,7 +4690,7 @@ void initializeLayers() {
     Vector2(1100.00, 290.00)
     }, Refractive)); // Organic - ITO */
 
-/* //! Sin wave Organic / ITO, 11 reps P-P 80
+    /* //! Sin wave Organic / ITO, 11 reps P-P 80
     OLEDLayers.push_back(Layer( {
     Vector2(100.00, 290.00), Vector2(102.27, 296.26), Vector2(104.55, 302.36), Vector2(106.82, 308.16), Vector2(109.09, 313.51), Vector2(111.36, 318.28), Vector2(113.64, 322.36), Vector2(115.91, 325.64), Vector2(118.18, 328.04), Vector2(120.45, 329.51), 
     Vector2(122.73, 330.00), Vector2(125.00, 329.51), Vector2(127.27, 328.04), Vector2(129.55, 325.64), Vector2(131.82, 322.36), Vector2(134.09, 318.28), Vector2(136.36, 313.51), Vector2(138.64, 308.16), Vector2(140.91, 302.36), Vector2(143.18, 296.26), 
@@ -4821,7 +4788,7 @@ void initializeLayers() {
     Vector2(1100.00, 290.00)
     }, Refractive)); // Organic - ITO */
 
-/* //! Sin wave Organic / ITO, 11 reps P-P 90
+    /* //! Sin wave Organic / ITO, 11 reps P-P 90
     OLEDLayers.push_back(Layer( {
     Vector2(100.00, 290.00), Vector2(102.27, 297.04), Vector2(104.55, 303.91), Vector2(106.82, 310.43), Vector2(109.09, 316.45), Vector2(111.36, 321.82), Vector2(113.64, 326.41), Vector2(115.91, 330.10), Vector2(118.18, 332.80), Vector2(120.45, 334.45), 
     Vector2(122.73, 335.00), Vector2(125.00, 334.45), Vector2(127.27, 332.80), Vector2(129.55, 330.10), Vector2(131.82, 326.41), Vector2(134.09, 321.82), Vector2(136.36, 316.45), Vector2(138.64, 310.43), Vector2(140.91, 303.91), Vector2(143.18, 297.04), 
@@ -4919,7 +4886,7 @@ void initializeLayers() {
     Vector2(1100.00, 290.00)
     }, Refractive)); // Organic - ITO */
 
-/* //! Sin wave Organic / ITO, 11 reps P-P 100
+    /* //! Sin wave Organic / ITO, 11 reps P-P 100
     OLEDLayers.push_back(Layer( {
     Vector2(100.00, 290.00), Vector2(102.27, 297.82), Vector2(104.55, 305.45), Vector2(106.82, 312.70), Vector2(109.09, 319.39), Vector2(111.36, 325.36), Vector2(113.64, 330.45), Vector2(115.91, 334.55), Vector2(118.18, 337.55), Vector2(120.45, 339.38), 
     Vector2(122.73, 340.00), Vector2(125.00, 339.38), Vector2(127.27, 337.55), Vector2(129.55, 334.55), Vector2(131.82, 330.45), Vector2(134.09, 325.36), Vector2(136.36, 319.39), Vector2(138.64, 312.70), Vector2(140.91, 305.45), Vector2(143.18, 297.82), 
