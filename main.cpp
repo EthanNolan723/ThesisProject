@@ -23,13 +23,13 @@ using namespace std;
 
 #define TOTALRAYS 10000
 #define TOTALBOUNCES 300
-#define TOTALRUNS 10
+#define TOTALRUNS 2000
 #define OLEDWIDTH 1000
 #define NEWTONITERATIONS 10
 #define WAVELENGTH 510 * 1e-9
 #define LAYERPPINCREASE 10
 #define LAYERPPSTARTING 10
-#define LAYERPPENDING 30
+#define LAYERPPENDING 120
 
 // 10k, 300, 2k, 10
 
@@ -208,15 +208,17 @@ int WinMain(int argc, char* argv[]){
             }
 
             outCoupledPercentage.push_back((float) outcouplingCount/TOTALRAYS);
-            cout << run << '/' << TOTALRUNS << '\n';
+            cout << run << '/' << TOTALRUNS << ' ';
         }
         float average = accumulate(outCoupledPercentage.begin(), outCoupledPercentage.end(), 0.0f)/outCoupledPercentage.size();
         allAverages.push_back(average);
+        cout << '\n' << layerPP << '/' << LAYERPPENDING;
+        cout << '\n' << average << '\n';
     }
 
     int end = clock();
     for (const auto& avg : allAverages) {
-        cout << avg << "\n";
+        cout << avg << " ";
     }
     std::cout << '\n' << "        Time >> " << double(end-start)/CLOCKS_PER_SEC;
     
