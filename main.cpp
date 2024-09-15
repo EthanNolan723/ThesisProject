@@ -23,13 +23,13 @@ using namespace std;
 
 #define TOTALRAYS 10000
 #define TOTALBOUNCES 300
-#define TOTALRUNS 2000
+#define TOTALRUNS 1000
 #define OLEDWIDTH 1000
 #define NEWTONITERATIONS 10
 #define WAVELENGTH 510 * 1e-9
 #define LAYERPPINCREASE 10
 #define LAYERPPSTARTING 10
-#define LAYERPPENDING 120
+#define LAYERPPENDING 100
 
 // 10k, 300, 2k, 10
 
@@ -108,7 +108,7 @@ int WinMain(int argc, char* argv[]){
             initializeLayers(layerPP);
 
             for (int i = 0; i < TOTALRAYS; i++){ //! Generating Random Rays
-                RAYS.push_back(Ray(Vector2(600, 185), RndDir(), 0, 2)); // distribution uniform vs normal - time dependent density theory - dft
+                RAYS.push_back(Ray(Vector2(startLocRange(gen), 185), RndDir(), 0, 2)); // distribution uniform vs normal - time dependent density theory - dft
             }
 
             // //! Testing Corner Itersection
@@ -208,7 +208,9 @@ int WinMain(int argc, char* argv[]){
             }
 
             outCoupledPercentage.push_back((float) outcouplingCount/TOTALRAYS);
-            cout << run << '/' << TOTALRUNS << ' ';
+            if ((run % 10) == 0){
+                cout << run << '/' << TOTALRUNS << ' ';
+            }
         }
         float average = accumulate(outCoupledPercentage.begin(), outCoupledPercentage.end(), 0.0f)/outCoupledPercentage.size();
         allAverages.push_back(average);
@@ -221,7 +223,8 @@ int WinMain(int argc, char* argv[]){
         cout << avg << " ";
     }
     std::cout << '\n' << "        Time >> " << double(end-start)/CLOCKS_PER_SEC;
-    
+
+
     // Display Outputs of single run
     // std::cout << '\n' << "             Time >> " << double(end-start)/CLOCKS_PER_SEC;
     // std::cout << '\n' << "         Rays Out >> " << outcouplingCount;
